@@ -4,6 +4,8 @@
 #' @param pairwise_annotation data frame from prepare_pairwise_annotation
 #' @param label string scalar indicating column for text annotation
 #'
+#' @import ggplot2
+#'
 #' @return ggplot object
 #' @export
 #'
@@ -35,13 +37,13 @@ plot_pairwise_annotation = function(plot,
 #' Prepare pairwise annotation data frame for plotting by assigning tiers and y positions
 #'
 #' @param data data frame containing dataset on which the annotations will be plotted
-#' @param pairwise_annotation pairwise annotations
-#' @param y
-#' @param label
-#' @param values_to_exclude
-#' @param groups
-#' @param tier_width
-#' @param scale
+#' @param pairwise_annotation data frame containing pairwise annotations (for example, pairwise statistical tests)
+#' @param y string scalar indicating column for y-axis
+#' @param label string scalar indicating column for text annotation
+#' @param values_to_exclude string vector indicating values to not annotate (for example, "ns" for statistical tests)
+#' @param groups string vector of columns to group by before assigning optimal y positions
+#' @param tier_width numeric scalar indicating relative distance between tiers for pairwise annotations
+#' @param scale string scalar that is either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
 #' @export
@@ -96,7 +98,6 @@ prepare_pairwise_annotation = function(data,
 #' @param scale
 #'
 #' @return
-#' @export
 #'
 #' @examples
 prepare_pairwise_annotation_single_group = function(data,
@@ -184,7 +185,6 @@ assign_tiers = function(pairwise_annotation) {
 #' @param scale
 #'
 #' @return
-#' @export
 #'
 #' @examples
 map_tiers = function(data,
@@ -216,6 +216,14 @@ map_tiers = function(data,
   }
 }
 
+#' Add tier mapping to pairwise annotation data based on tier mapping
+#'
+#' @param pairwise_annotation
+#' @param tier_mapping
+#'
+#' @return
+#'
+#' @examples
 add_tier_mapping = function(pairwise_annotation, tier_mapping) {
   if (nrow(pairwise_annotation) > 0) {
     if (nrow(tier_mapping) > 1) {
@@ -234,7 +242,6 @@ add_tier_mapping = function(pairwise_annotation, tier_mapping) {
 #' @param length.out
 #'
 #' @return
-#' @export
 #'
 #' @examples
 seq_log = function(from, by, length.out) {
