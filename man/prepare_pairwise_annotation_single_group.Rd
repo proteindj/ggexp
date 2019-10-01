@@ -10,6 +10,9 @@ prepare_pairwise_annotation_single_group(data, pairwise_annotation, x, y,
 \arguments{
 \item{scale}{}
 }
+\value{
+
+}
 \description{
 Prepare pairwise annotation data frame for plotting by assigning tiers and y positions for a single group
 }

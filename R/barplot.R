@@ -1,6 +1,6 @@
 #' Plot (stacked) barplot with annotations
 #'
-#' This is a convenience function wrapping around geom_bar, but making it easy to switch between stacked and not, and adjusting annotations accordingly.
+#' This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 #'
 #' @param data data frame containing dataset to use for plotting
 #' @param x string scalar indicating column for x-axis
@@ -8,6 +8,7 @@
 #' @param label string scalar indicating column for text annotation
 #' @param color string scalar indicating column for color
 #' @param stacked boolean indicating whether result should be a stacked barplot or not
+#' @param constant_height boolean indicating whether stacked bars should have constant height (proportions plotted)
 #' @param facet_rows string vector indicating columns for faceting by row
 #' @param facet_columns string vector indicating columns for faceting by column
 #' @param facet_type string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
@@ -21,12 +22,29 @@
 #' @export
 #'
 #' @examples
+#'
+#' library(dplyr)
+#'
+#' data = mtcars %>%
+#'   mutate(cyl = factor(cyl)) %>%
+#'   group_by(cyl, am) %>%
+#'   tally()
+#'
+#' plot_barplot(
+#'   data = data,
+#'   x = "am",
+#'   y = "n",
+#'   color = "cyl",
+#'   label = "cyl"
+#' )
 plot_barplot = function(data,
                         x,
                         y,
                         label = NULL,
                         color = NULL,
+                        fill = NULL,
                         stacked = TRUE,
+                        constant_height = TRUE,
                         facet_rows = c(),
                         facet_columns = c(),
                         facet_type = "grid",
@@ -51,13 +69,15 @@ plot_barplot = function(data,
     }
   }
 
+  stack_or_fill = ifelse(constant_height, "fill", "stack")
+
   plot = ggplot(data = data, aes_string(x = x, y = y, color = color)) +
     geom_bar(
       stat = "identity",
       fill = "white",
-      position = ifelse(stacked, "stack", "dodge")
+      position = ifelse(stacked, stack_or_fill, "dodge")
     ) +
-    get_theme()
+    theme_ggexp()
 
   if (!is.null(color)) {
     if (!is.numeric(data[, color, drop = TRUE])) {
@@ -67,9 +87,9 @@ plot_barplot = function(data,
 
   if (!is.null(label)) {
     if (stacked) {
-      plot = plot + geom_label(aes_string(label = label), position = position_stack(vjust = 0.5))
+      plot = plot + geom_text(aes_string(label = label), position = get(paste0("position_", stack_or_fill))(vjust = 0.5), show.legend = FALSE)
     } else {
-      plot = plot + geom_label(aes_string(label = label), position = position_dodge(width = 0.9))
+      plot = plot + geom_text(aes_string(label = label), position = position_dodge(width = 0.9), show.legend = FALSE)
     }
   }
 

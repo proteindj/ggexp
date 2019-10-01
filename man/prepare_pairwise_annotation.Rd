@@ -11,9 +11,22 @@ prepare_pairwise_annotation(data, pairwise_annotation, x, y, label,
 \arguments{
 \item{data}{data frame containing dataset on which the annotations will be plotted}
 
-\item{pairwise_annotation}{pairwise annotations}
+\item{pairwise_annotation}{data frame containing pairwise annotations (for example, pairwise statistical tests)}
 
-\item{scale}{}
+\item{y}{string scalar indicating column for y-axis}
+
+\item{label}{string scalar indicating column for text annotation}
+
+\item{values_to_exclude}{string vector indicating values to not annotate (for example, "ns" for statistical tests)}
+
+\item{groups}{string vector of columns to group by before assigning optimal y positions}
+
+\item{tier_width}{numeric scalar indicating relative distance between tiers for pairwise annotations}
+
+\item{scale}{string scalar that is either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced}
+}
+\value{
+
 }
 \description{
 Prepare pairwise annotation data frame for plotting by assigning tiers and y positions

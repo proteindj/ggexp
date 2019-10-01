@@ -9,6 +9,9 @@ map_tiers(data, pairwise_annotation, y, tier_width, scale)
 \arguments{
 \item{scale}{}
 }
+\value{
+
+}
 \description{
 Map tiers to y positions based on the data
 }

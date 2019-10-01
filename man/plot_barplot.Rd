@@ -4,9 +4,10 @@
 \alias{plot_barplot}
 \title{Plot (stacked) barplot with annotations}
 \usage{
-plot_barplot(data, x, y, label = NULL, color = NULL, stacked = TRUE,
-  facet_rows = c(), facet_columns = c(), facet_type = "grid",
-  facet_switch = NULL, facet_scales = "free", nrow = 1)
+plot_barplot(data, x, y, label = NULL, color = NULL, fill = NULL,
+  stacked = TRUE, constant_height = TRUE, facet_rows = c(),
+  facet_columns = c(), facet_type = "grid", facet_switch = NULL,
+  facet_scales = "free", nrow = 1)
 }
 \arguments{
 \item{data}{data frame containing dataset to use for plotting}
@@ -20,6 +21,8 @@ plot_barplot(data, x, y, label = NULL, color = NULL, stacked = TRUE,
 \item{color}{string scalar indicating column for color}
 
 \item{stacked}{boolean indicating whether result should be a stacked barplot or not}
+
+\item{constant_height}{boolean indicating whether stacked bars should have constant height (proportions plotted)}
 
 \item{facet_rows}{string vector indicating columns for faceting by row}
 
@@ -37,5 +40,22 @@ plot_barplot(data, x, y, label = NULL, color = NULL, stacked = TRUE,
 ggplot object
 }
 \description{
-This is a convenience function wrapping around geom_bar, but making it easy to switch between stacked and not, and adjusting annotations accordingly.
+This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
+}
+\examples{
+
+library(dplyr)
+
+data = mtcars \%>\%
+  mutate(cyl = factor(cyl)) \%>\%
+  group_by(cyl, am) \%>\%
+  tally()
+
+plot_barplot(
+  data = data,
+  x = "am",
+  y = "n",
+  color = "cyl",
+  label = "cyl"
+)
 }

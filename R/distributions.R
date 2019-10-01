@@ -9,11 +9,12 @@
 #' @param color string scalar indicating column for color
 #' @param alpha numeric scalar for alpha of points
 #' @param scale string scalar that is either "default" for linearly-spaced scale or "log" for log-spaced
-#' @param annotation_label string scalar indicating column of pairwise_annotation data to use for annotation text
 #' @param lower_quantile numeric scalar indicating lower quantile of values, beyond which data points are filtered from plot
 #' @param upper_quantile numeric scalar indicating uower quantile of values, beyond which data points are filtered from plot
 #' @param tier_width numeric scalar indicating relative distance between tiers for pairwise annotations
 #' @param annotate_counts boolean scalar indicating whether to annotate counts per group or not
+#' @param pairwise_annotation_label string scalar indicating column of pairwise_annotation data to use for annotation text
+#' @param pairwise_annotation_exclude string vector indicating values to not annotate on pairwise annotations
 #' @param facet_rows string vector indicating columns for faceting by row
 #' @param facet_columns string vector indicating columns for faceting by column
 #' @param facet_type string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
@@ -27,48 +28,40 @@
 #' @export
 #'
 #' @examples
-plot_distributions <- function(data,
-                               pairwise_annotation = NULL,
-                               type = "quasirandom",
-                               x,
-                               y,
-                               group = NULL,
-                               color = NULL,
-                               alpha = 0.5,
-                               scale = "default",
-                               lower_quantile = 0,
-                               upper_quantile = 1,
-                               tier_width = 0.16,
-                               annotate_counts = TRUE,
-                               annotation_label = "p_signif",
-                               facet_rows = c(),
-                               facet_columns = c(),
-                               facet_type = "grid",
-                               facet_scales = "fixed",
-                               facet_switch = NULL,
-                               nrow = 1) {
-
+#'
+plot_distributions = function(data,
+                              pairwise_annotation = NULL,
+                              type = "quasirandom",
+                              x,
+                              y,
+                              group = NULL,
+                              color = NULL,
+                              alpha = 0.5,
+                              scale = "default",
+                              lower_quantile = 0,
+                              upper_quantile = 1,
+                              tier_width = 0.16,
+                              annotate_counts = TRUE,
+                              pairwise_annotation_label = "p_signif",
+                              pairwise_annotation_exclude = c(),
+                              facet_rows = c(),
+                              facet_columns = c(),
+                              facet_type = "wrap",
+                              facet_scales = "free",
+                              facet_switch = NULL,
+                              nrow = 1) {
   plot = get(paste0("plot_", type))(data,
-                                           x,
-                                           y,
-                                           color,
-                                           group,
-                                           alpha)
+                                    x,
+                                    y,
+                                    color,
+                                    group,
+                                    alpha)
 
   if (!is.null(color)) {
     plot = plot + get_palette(data[, color, drop = TRUE])
   }
 
   plot = plot_scale(plot, scale, type)
-
-  if (annotate_counts) {
-    counts_annotation = compute_counts_annotation_data(data, x, facet_rows, facet_columns)
-    plot = plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
-  }
-
-  if (!is.null(pairwise_annotation) & (annotation_label %in% colnames(pairwise_annotation)) & !(type %in% c("density", "ridge"))) {
-    plot = plot_pairwise_annotation(plot, pairwise_annotation, annotation_label)
-  }
 
   plot = plot_facets(plot,
                      facet_rows,
@@ -78,7 +71,24 @@ plot_distributions <- function(data,
                      facet_switch,
                      nrow)
 
-  plot = plot + get_theme()
+  if (annotate_counts) {
+    counts_annotation = compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
+    plot = plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
+  }
+
+  if (!is.null(pairwise_annotation) & (pairwise_annotation_label %in% colnames(pairwise_annotation)) &
+      !(type %in% c("density", "ridge"))) {
+    plot = plot_pairwise_annotation(
+      plot,
+      pairwise_annotation,
+      pairwise_annotation_label,
+      pairwise_annotation_exclude,
+      tier_width,
+      scale
+    )
+  }
+
+  plot = plot + theme_ggexp()
 
   return(plot)
 }
@@ -96,7 +106,11 @@ plot_distributions <- function(data,
 #' @return
 #'
 #' @examples
-plot_counts_annotation = function(plot, x, counts_annotation, annotate_counts, type) {
+plot_counts_annotation = function(plot,
+                                  x,
+                                  counts_annotation,
+                                  annotate_counts,
+                                  type) {
   if (annotate_counts &&
       !(type %in% c("density", "ridge"))) {
     plot = plot +
@@ -117,11 +131,9 @@ plot_counts_annotation = function(plot, x, counts_annotation, annotate_counts, t
     plot = plot +
       geom_text(
         data = counts_annotation,
-        aes_string(
-          label = "n",
-          x = Inf,
-          y = x
-        ),
+        aes_string(label = "n",
+                   x = Inf,
+                   y = x),
         hjust = 1.3,
         vjust = -1,
         size = 2,
@@ -142,11 +154,11 @@ plot_counts_annotation = function(plot, x, counts_annotation, annotate_counts, t
 #' @return
 #'
 #' @examples
-compute_counts_annotation_data = function(data, x, facet_rows, facet_columns) {
-  counts = data[, unique(c(x, facet_rows, facet_columns))] %>%
+compute_counts_annotation_data = function(data, x, groups) {
+  counts = data[, unique(c(x, groups)), drop = FALSE] %>%
     stats::na.omit()
   counts = counts %>%
-    dplyr::group_by(.dots = unique(c(x, facet_rows, facet_columns))) %>%
+    dplyr::group_by(.dots = unique(c(x, groups))) %>%
     dplyr::tally()
   return(counts)
 }
@@ -165,7 +177,7 @@ compute_counts_annotation_data = function(data, x, facet_rows, facet_columns) {
 plot_scale = function(plot, scale, type) {
   if (scale == "log") {
     plot = plot +
-      scale_y_continuous(trans='log10')
+      scale_y_continuous(trans = 'log10')
   }
   if (!(type %in% c("density", "ridge"))) {
     plot = plot + scale_x_discrete(drop = FALSE)
@@ -197,7 +209,9 @@ plot_line = function(data,
     geom_line(alpha = alpha,
               aes_string(x = x, y = y, group = group),
               color = color) +
-    geom_point(alpha = alpha, aes_string(x = x, y = y, col = color), shape = 1)
+    geom_point(alpha = alpha,
+               aes_string(x = x, y = y, col = color),
+               shape = 1)
 
   return(plot)
 }
@@ -265,12 +279,18 @@ plot_quasirandom = function(data,
     col = color,
     group = group
   )) +
-    ggbeeswarm::geom_quasirandom(method = "tukeyDense", alpha = alpha, shape = 1, dodge.width = 1, position = position_dodge(width=0.75)) +
+    ggbeeswarm::geom_quasirandom(
+      method = "tukeyDense",
+      alpha = alpha,
+      shape = 1,
+      dodge.width = 1,
+      position = position_dodge(width = 0.75)
+    ) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
       outlier.size = 0,
-      position = position_dodge(width=1)
+      position = position_dodge(width = 1)
     )
 
   return(plot)
@@ -302,12 +322,12 @@ plot_violin = function(data,
     col = color,
     group = group
   )) +
-    geom_violin(alpha = alpha, position = position_dodge(width=1)) +
+    geom_violin(alpha = alpha, position = position_dodge(width = 1)) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
       outlier.size = 0,
-      position = position_dodge(width=1)
+      position = position_dodge(width = 1)
     )
   return(plot)
 }
@@ -391,7 +411,12 @@ plot_ridge = function(data,
                       color = NULL,
                       group = NULL,
                       alpha = 0.5) {
-  plot = ggplot(data, aes_string(x = y, y = x, col = x, fill = x)) +
+  plot = ggplot(data, aes_string(
+    x = y,
+    y = x,
+    col = x,
+    fill = x
+  )) +
     ggridges::geom_density_ridges(alpha = alpha) +
     geom_rug(alpha = 0.1)
   return(plot)

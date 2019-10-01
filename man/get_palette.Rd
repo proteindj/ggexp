@@ -4,7 +4,7 @@
 \alias{get_palette}
 \title{Generate ggexp palette with assigned color values based on alphabetized input values and overriden with input palette}
 \usage{
-get_palette(values, palette = c())
+get_palette(values = NULL, palette = c())
 }
 \arguments{
 \item{values}{character vector or factor which to assign colors to}

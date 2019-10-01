@@ -31,7 +31,7 @@ plot_pairwise_scatterplot = function(data,
                             facet_columns = c(),
                             facet_type = "grid",
                             facet_scales = "free",
-                            facet_switch = NULL,
+                            facet_switch = "both",
                             nrow = 2) {
 
   axes_columns = intersect(c(x, y), colnames(data))
@@ -77,7 +77,7 @@ plot_pairwise_scatterplot = function(data,
 
   plot = data %>%
     ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color, size = size)) +
-    get_theme() +
+    theme_ggexp() +
     labs(x = xlab, y = ylab) +
     geom_point(alpha = alpha)
 

@@ -9,6 +9,9 @@ seq_log(from, by, length.out)
 \arguments{
 \item{length.out}{}
 }
+\value{
+
+}
 \description{
 Sequence generation with equal distance in log space
 }

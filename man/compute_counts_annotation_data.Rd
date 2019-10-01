@@ -4,7 +4,7 @@
 \alias{compute_counts_annotation_data}
 \title{Compute number of values per group for count annotation}
 \usage{
-compute_counts_annotation_data(data, x, facet_rows, facet_columns)
+compute_counts_annotation_data(data, x, groups)
 }
 \arguments{
 \item{facet_columns}{}

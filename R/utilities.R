@@ -6,23 +6,43 @@
 #' @export
 #'
 #' @examples
-get_palette = function(values, palette = c()) {
-  if (!is.numeric(values)) {
-    palette_values =
-      c(ggsci::pal_d3()(10),
-        ggsci::pal_lancet()(9),
-        ggsci::pal_npg()(10),
-        ggsci::pal_jama()(7))
-
+get_palette = function(values = NULL, palette = c()) {
+  palette_values =
+    c(
+      ggsci::pal_d3()(10),
+      ggsci::pal_lancet()(9),
+      ggsci::pal_npg()(10),
+      ggsci::pal_jama()(7)
+    )
+  if (is.null(values)) {
+    palette_custom = ggplot2::scale_color_manual(
+      values = palette_values,
+      aesthetics = c("colour", "fill"),
+      drop = FALSE
+    )
+  } else if (!is.numeric(values)) {
     levels = unique(values[!values == "NA"])
     palette_custom = palette_values[1:length(levels)]
     names(palette_custom) = sort(levels)
-    if (any(is.na(values)) || any(values == "NA")) palette_custom = c(palette_custom, "NA" = "gray70")
+    if (any(is.na(values)) ||
+        any(values == "NA"))
+      palette_custom = c(palette_custom, "NA" = "gray70")
     palette_custom = c(palette, palette_custom)[unique(names(c(palette, palette_custom)))]
 
-    palette_custom = ggplot2::scale_color_manual(values = palette_custom, aesthetics = c("colour", "fill"), drop = FALSE)
+    palette_custom = ggplot2::scale_color_manual(
+      values = palette_custom,
+      aesthetics = c("colour", "fill"),
+      drop = FALSE
+    )
   } else {
-    palette_custom = list(high = "#67001F", mid = "#F7F7F7", low = "#053061", midpoint = 0, limits = c(min(values), max(values)), aesthetics = c("colour", "fill"))
+    palette_custom = list(
+      high = "#67001F",
+      mid = "#F7F7F7",
+      low = "#053061",
+      midpoint = 0,
+      limits = c(min(values), max(values)),
+      aesthetics = c("colour", "fill")
+    )
     palette_custom = c(palette, palette_custom)[unique(names(c(palette, palette_custom)))]
 
     palette_custom = do.call(ggplot2::scale_color_gradient2, palette_custom)
@@ -39,14 +59,14 @@ get_palette = function(values, palette = c()) {
 #' @export
 #'
 #' @examples
-get_theme <- function() {
+theme_ggexp = function() {
   # theme_light() +
   #   theme(strip.background = element_rect(fill = 'white')) +
   #   theme(strip.text = element_text(colour = 'black')) +
   #   theme(panel.grid.minor = element_blank()) +
   #   theme(strip.background = element_rect(color = "black", size = 0.3))
   theme_classic() +
-    theme(strip.background = element_blank())
+    theme(strip.background = element_blank(), strip.placement = "outside")
 }
 
 #' Utility function to facet a plot

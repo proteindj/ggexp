@@ -8,7 +8,8 @@ plot_distributions(data, pairwise_annotation = NULL,
   type = "quasirandom", x, y, group = NULL, color = NULL,
   alpha = 0.5, scale = "default", lower_quantile = 0,
   upper_quantile = 1, tier_width = 0.16, annotate_counts = TRUE,
-  annotation_label = "p_signif", facet_rows = c(),
+  pairwise_annotation_label = "p_signif",
+  pairwise_annotation_exclude = c(), facet_rows = c(),
   facet_columns = c(), facet_type = "grid", facet_scales = "fixed",
   facet_switch = NULL, nrow = 1)
 }
@@ -39,7 +40,9 @@ plot_distributions(data, pairwise_annotation = NULL,
 
 \item{annotate_counts}{boolean scalar indicating whether to annotate counts per group or not}
 
-\item{annotation_label}{string scalar indicating column of pairwise_annotation data to use for annotation text}
+\item{pairwise_annotation_label}{string scalar indicating column of pairwise_annotation data to use for annotation text}
+
+\item{pairwise_annotation_exclude}{string vector indicating values to not annotate on pairwise annotations}
 
 \item{facet_rows}{string vector indicating columns for faceting by row}
 
@@ -58,4 +61,7 @@ ggplot object
 }
 \description{
 Plot distributions with pairwise annotations and flexibility
+}
+\examples{
+
 }
