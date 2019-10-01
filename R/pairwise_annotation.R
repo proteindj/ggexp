@@ -87,9 +87,9 @@ prepare_pairwise_annotation = function(data,
                                        groups = c(),
                                        tier_width = 0.15,
                                        scale = "default") {
-  data = tidyr::nest(data, data = -c(groups))
+  data = tidyr::nest(data, data = setdiff(colnames(data), groups))
   pairwise_annotation = tidyr::nest(pairwise_annotation,
-                                    pairwise_annotation = -c(groups))
+                                    pairwise_annotation = setdiff(colnames(pairwise_annotation), groups))
 
   combined = dplyr::left_join(data, pairwise_annotation, by = groups)
 
