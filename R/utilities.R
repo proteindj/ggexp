@@ -6,13 +6,13 @@
 #' @export
 #'
 #' @examples
-get_palette = function(values = NULL, palette = c()) {
+get_palette = function(values = NULL, palette = c(), return_ggplot_scale = TRUE) {
   palette_values =
     c(
-      ggsci::pal_d3()(10),
-      ggsci::pal_lancet()(9),
       ggsci::pal_npg()(10),
-      ggsci::pal_jama()(7)
+      ggsci::pal_jama()(7),
+      ggsci::pal_d3()(10),
+      ggsci::pal_lancet()(9)
     )
   if (is.null(values)) {
     palette_custom = ggplot2::scale_color_manual(
@@ -29,11 +29,13 @@ get_palette = function(values = NULL, palette = c()) {
       palette_custom = c(palette_custom, "NA" = "gray70")
     palette_custom = c(palette, palette_custom)[unique(names(c(palette, palette_custom)))]
 
-    palette_custom = ggplot2::scale_color_manual(
-      values = palette_custom,
-      aesthetics = c("colour", "fill"),
-      drop = FALSE
-    )
+    if (return_ggplot_scale) {
+      palette_custom = ggplot2::scale_color_manual(
+        values = palette_custom,
+        aesthetics = c("colour", "fill"),
+        drop = FALSE
+      )
+    }
   } else {
     palette_custom = list(
       high = "#67001F",
@@ -45,7 +47,7 @@ get_palette = function(values = NULL, palette = c()) {
     )
     palette_custom = c(palette, palette_custom)[unique(names(c(palette, palette_custom)))]
 
-    palette_custom = do.call(ggplot2::scale_color_gradient2, palette_custom)
+    if (return_ggplot_scale) palette_custom = do.call(ggplot2::scale_color_gradient2, palette_custom)
   }
 
   return(palette_custom)

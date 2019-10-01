@@ -31,6 +31,8 @@ library(ggexp)
 library(ggplot2)
 library(magrittr)
 
+set.seed(1234)
+
 data = data.frame(
   "feature" = rep(c("feature_1", "feature_2", "feature_3"), each = 1000),
   "value" = c(

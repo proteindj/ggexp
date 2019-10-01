@@ -385,7 +385,10 @@ plot_density = function(data,
                         color = NULL,
                         group = NULL,
                         alpha = 0.5) {
-  plot = ggplot(data, aes_string(x = y, col = x, fill = x)) +
+  if (!is.null(group) && !is.null(color)) {
+    data[, group] = interaction(data[, color, drop = TRUE], data[, group, drop = TRUE])
+  }
+  plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
     geom_density(alpha = alpha) +
     geom_rug()
   return(plot)

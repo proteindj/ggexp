@@ -38,27 +38,30 @@ plot_pairwise_annotation = function(plot,
     scale = scale
   )
 
-  plot +
-    geom_segment(
-      data = pairwise_annotation,
-      aes(
-        x = group1_num + 0.1,
-        xend = group2_num - 0.1,
-        y = y.position,
-        yend = y.position
-      ),
-      inherit.aes = FALSE
-    ) +
-    geom_text(
-      data = pairwise_annotation,
-      aes(
-        x = (group1_num + group2_num) / 2,
-        y = y.position,
-        label = !!as.name(label)
-      ),
-      vjust = -.05,
-      inherit.aes = FALSE
-    )
+  if (nrow(pairwise_annotation) > 0) {
+    plot = plot +
+      geom_segment(
+        data = pairwise_annotation,
+        aes(
+          x = group1_num + 0.1,
+          xend = group2_num - 0.1,
+          y = y.position,
+          yend = y.position
+        ),
+        inherit.aes = FALSE
+      ) +
+      geom_text(
+        data = pairwise_annotation,
+        aes(
+          x = (group1_num + group2_num) / 2,
+          y = y.position,
+          label = !!as.name(label)
+        ),
+        vjust = -.05,
+        inherit.aes = FALSE
+      )
+    }
+  return(plot)
 }
 
 #' Prepare pairwise annotation data frame for plotting by assigning tiers and y positions
@@ -170,56 +173,76 @@ add_group_numbers = function(pairwise_annotation, data, x) {
 #' @return
 #'
 #' @examples
+# assign_tiers = function(pairwise_annotation) {
+#   if (nrow(pairwise_annotation) > 0) {
+#     pairwise_annotation = pairwise_annotation %>%
+#       dplyr::mutate(difference = abs(group2_num - group1_num)) %>%
+#       dplyr::arrange(difference, pmin(group1_num, group2_num)) %>%
+#       dplyr::mutate(rank = seq(1, nrow(.), by = 1)) %>%
+#       dplyr::mutate(tier = 1)
+#     for (i in 1:nrow(pairwise_annotation)) {
+#       K = as.numeric(pairwise_annotation[i, "rank"])
+#       G1 = min(as.numeric(pairwise_annotation[i, "group1_num"]),
+#                as.numeric(pairwise_annotation[i, "group2_num"]))
+#       G2 = max(as.numeric(pairwise_annotation[i, "group1_num"]),
+#                as.numeric(pairwise_annotation[i, "group2_num"]))
+#       options = c()
+#       for (j in 1:nrow(pairwise_annotation)) {
+#         k = as.numeric(pairwise_annotation[j, "rank"])
+#         g1 = min(as.numeric(pairwise_annotation[j, "group1_num"]),
+#                  as.numeric(pairwise_annotation[j, "group2_num"]))
+#         g2 = max(as.numeric(pairwise_annotation[j, "group1_num"]),
+#                  as.numeric(pairwise_annotation[j, "group2_num"]))
+#         t = as.numeric(pairwise_annotation[j, "tier"])
+#         if (K > k & ((G1 < g1 & g1 < G2) | (G1 < g2 & g2 < G2))) {
+#           opt = t + 1
+#         } else {
+#           opt = 0
+#         }
+#         options[j] = opt
+#       }
+#       tier = max(options)
+#       pairwise_annotation[i, "tier"] = tier
+#     }
+#   }
+#   return(pairwise_annotation)
+# }
 assign_tiers = function(pairwise_annotation) {
   if (nrow(pairwise_annotation) > 0) {
     pairwise_annotation = pairwise_annotation %>%
-      dplyr::mutate(difference = abs(group2_num - group1_num)) %>%
-      dplyr::arrange(difference, pmin(group1_num, group2_num)) %>%
-      dplyr::mutate(rank = seq(1, nrow(.), by = 1)) %>%
-      dplyr::mutate(tier = 1)
-    for (i in 1:nrow(pairwise_annotation)) {
-      K = as.numeric(pairwise_annotation[i, "rank"])
-      G1 = min(as.numeric(pairwise_annotation[i, "group1_num"]),
-               as.numeric(pairwise_annotation[i, "group2_num"]))
-      G2 = max(as.numeric(pairwise_annotation[i, "group1_num"]),
-               as.numeric(pairwise_annotation[i, "group2_num"]))
-      options = c()
-      for (j in 1:nrow(pairwise_annotation)) {
-        k = as.numeric(pairwise_annotation[j, "rank"])
-        g1 = min(as.numeric(pairwise_annotation[j, "group1_num"]),
-                 as.numeric(pairwise_annotation[j, "group2_num"]))
-        g2 = max(as.numeric(pairwise_annotation[j, "group1_num"]),
-                 as.numeric(pairwise_annotation[j, "group2_num"]))
-        t = as.numeric(pairwise_annotation[j, "tier"])
-        if (K > k & ((G1 < g1 & g1 < G2) | (G1 < g2 & g2 < G2))) {
-          opt = t + 1
-        } else {
-          opt = 0
-        }
-        options[j] = opt
-      }
-      tier = max(options)
-      pairwise_annotation[i, "tier"] = tier
+      dplyr::arrange(group2_num) %>%
+      dplyr::mutate(rank = seq(1, nrow(.), by = 1))
+    assigned = pairwise_annotation[c(), , drop = FALSE]
+    unassigned = pairwise_annotation
+    tier = 1
+    while (nrow(unassigned) > 0) {
+      result = assign_tiers_unassigned(unassigned)
+      assigned = rbind(assigned, result$assigned %>% dplyr::mutate(tier = tier))
+      unassigned = result$unassigned
+      tier = tier + 1
     }
+    pairwise_annotation = assigned
   }
   return(pairwise_annotation)
 }
 
-# assign_tiers_ = function(pairwise_annotation) {
-#   assigned = pairwise_annotation[c(1), , drop = FALSE]
-#   unassigned = pairwise_annotation[c(), , drop = FALSE]
-#   right = pairwise_annotation[1, "group2_num"]
-#   for (i in 2:nrow(pairwise_annotation)) {
-#     row = pairwise_annotation[i, , drop = FALSE]
-#     if (pairwise_annotation[i, "group1_num"] > right) {
-#       right = pairwise_annotation[i, "group2_num"]
-#       assigned = rbind(assigned, row)
-#     } else {
-#       unassigned = rbind(unassigned, row)
-#     }
-#   }
-#   return(list(assigned = assigned, unassigned = unassigned))
-# }
+assign_tiers_unassigned = function(pairwise_annotation) {
+  assigned = pairwise_annotation[c(1), , drop = FALSE]
+  unassigned = pairwise_annotation[c(), , drop = FALSE]
+  right = pairwise_annotation[1, "group2_num"]
+  if (nrow(pairwise_annotation) > 1) {
+    for (i in 2:nrow(pairwise_annotation)) {
+      row = pairwise_annotation[i, , drop = FALSE]
+      if (pairwise_annotation[i, "group1_num"] >= right) {
+        right = pairwise_annotation[i, "group2_num"]
+        assigned = rbind(assigned, row)
+      } else {
+        unassigned = rbind(unassigned, row)
+      }
+    }
+  }
+  return(list(assigned = assigned, unassigned = unassigned))
+}
 
 #' Map tiers to y positions based on the data
 #'
