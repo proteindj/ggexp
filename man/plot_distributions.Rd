@@ -10,7 +10,7 @@ plot_distributions(data, pairwise_annotation = NULL,
   upper_quantile = 1, tier_width = 0.16, annotate_counts = TRUE,
   pairwise_annotation_label = "p_signif",
   pairwise_annotation_exclude = c(), facet_rows = c(),
-  facet_columns = c(), facet_type = "grid", facet_scales = "fixed",
+  facet_columns = c(), facet_type = "wrap", facet_scales = "free",
   facet_switch = NULL, nrow = 1)
 }
 \arguments{

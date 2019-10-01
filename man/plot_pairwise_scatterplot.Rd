@@ -7,7 +7,7 @@
 plot_pairwise_scatterplot(data, x = colnames(data \%>\%
   select_if(is.numeric)), y = x, color = NULL, shape = NULL,
   size = NULL, alpha = 0.3, facet_rows = c(), facet_columns = c(),
-  facet_type = "grid", facet_scales = "free", facet_switch = NULL,
+  facet_type = "grid", facet_scales = "free", facet_switch = "both",
   nrow = 2)
 }
 \arguments{
