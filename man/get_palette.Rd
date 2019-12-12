@@ -7,10 +7,10 @@
 get_palette(values = NULL, palette = c(), return_ggplot_scale = TRUE)
 }
 \arguments{
-\item{values}{character vector or factor which to assign colors to}
+\item{return_ggplot_scale}{}
 }
 \value{
-ggplot color/fill scale object
+
 }
 \description{
 Generate ggexp palette with assigned color values based on alphabetized input values and overriden with input palette

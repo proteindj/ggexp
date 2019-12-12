@@ -4,8 +4,7 @@
 \alias{plot_violin}
 \title{Plot violin plot}
 \usage{
-plot_violin(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_violin(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

@@ -4,8 +4,7 @@
 \alias{plot_ridge}
 \title{Plot ridge plot}
 \usage{
-plot_ridge(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_ridge(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

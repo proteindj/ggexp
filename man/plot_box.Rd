@@ -4,8 +4,7 @@
 \alias{plot_box}
 \title{Plot box and whiskers plot}
 \usage{
-plot_box(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_box(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

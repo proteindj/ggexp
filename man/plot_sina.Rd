@@ -4,8 +4,7 @@
 \alias{plot_sina}
 \title{Plot sina plot}
 \usage{
-plot_sina(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_sina(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

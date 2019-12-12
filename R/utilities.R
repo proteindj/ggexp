@@ -1,8 +1,10 @@
 #' Generate ggexp palette with assigned color values based on alphabetized input values and overriden with input palette
 #'
-#' @param values character vector or factor which to assign colors to
+#' @param values
+#' @param palette
+#' @param return_ggplot_scale
 #'
-#' @return ggplot color/fill scale object
+#' @return
 #' @export
 #'
 #' @examples
@@ -113,7 +115,7 @@ plot_facets = function(plot,
     )
   } else {
     plot = plot + facet_wrap(
-      facets = c(facet_rows, facet_columns),
+      facets = c(facet_columns, facet_rows),
       nrow = nrow,
       scales = facet_scales,
       drop = TRUE,

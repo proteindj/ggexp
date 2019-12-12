@@ -4,8 +4,16 @@
 \alias{prepare_pairwise_annotation_single_group}
 \title{Prepare pairwise annotation data frame for plotting by assigning tiers and y positions for a single group}
 \usage{
-prepare_pairwise_annotation_single_group(data, pairwise_annotation, x, y,
-  label, values_to_exclude, tier_width, scale)
+prepare_pairwise_annotation_single_group(
+  data,
+  pairwise_annotation,
+  x,
+  y,
+  label,
+  values_to_exclude,
+  tier_width,
+  scale
+)
 }
 \arguments{
 \item{scale}{}

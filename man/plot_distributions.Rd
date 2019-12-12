@@ -4,14 +4,29 @@
 \alias{plot_distributions}
 \title{Plot distributions with pairwise annotations and flexibility}
 \usage{
-plot_distributions(data, pairwise_annotation = NULL,
-  type = "quasirandom", x, y, group = NULL, color = NULL,
-  alpha = 0.5, scale = "default", lower_quantile = 0,
-  upper_quantile = 1, tier_width = 0.16, annotate_counts = TRUE,
+plot_distributions(
+  data,
+  pairwise_annotation = NULL,
+  type = "quasirandom",
+  x,
+  y,
+  group = NULL,
+  color = NULL,
+  alpha = 0.5,
+  scale = "default",
+  lower_quantile = 0,
+  upper_quantile = 1,
+  tier_width = 0.16,
+  annotate_counts = TRUE,
   pairwise_annotation_label = "p_signif",
-  pairwise_annotation_exclude = c(), facet_rows = c(),
-  facet_columns = c(), facet_type = "wrap", facet_scales = "free",
-  facet_switch = NULL, nrow = 1)
+  pairwise_annotation_exclude = c(),
+  facet_rows = c(),
+  facet_columns = c(),
+  facet_type = "wrap",
+  facet_scales = "free",
+  facet_switch = NULL,
+  nrow = 1
+)
 }
 \arguments{
 \item{data}{data frame containing dataset to use for plotting}

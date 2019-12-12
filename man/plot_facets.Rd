@@ -4,8 +4,15 @@
 \alias{plot_facets}
 \title{Utility function to facet a plot}
 \usage{
-plot_facets(plot, facet_rows, facet_columns, facet_type, facet_scales,
-  facet_switch, nrow)
+plot_facets(
+  plot,
+  facet_rows,
+  facet_columns,
+  facet_type,
+  facet_scales,
+  facet_switch,
+  nrow
+)
 }
 \arguments{
 \item{plot}{ggplot object}

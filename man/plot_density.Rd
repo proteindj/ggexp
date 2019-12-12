@@ -4,8 +4,7 @@
 \alias{plot_density}
 \title{Plot density plot}
 \usage{
-plot_density(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_density(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

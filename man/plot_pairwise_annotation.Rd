@@ -4,8 +4,14 @@
 \alias{plot_pairwise_annotation}
 \title{Plot pairwise annotation}
 \usage{
-plot_pairwise_annotation(plot, pairwise_annotation, label = "p_signif",
-  values_to_exclude = c(), tier_width = 0.15, scale = "default")
+plot_pairwise_annotation(
+  plot,
+  pairwise_annotation,
+  label = "p_signif",
+  values_to_exclude = c(),
+  tier_width = 0.15,
+  scale = "default"
+)
 }
 \arguments{
 \item{plot}{ggplot object with discrete x-axis}

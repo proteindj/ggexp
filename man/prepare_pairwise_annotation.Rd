@@ -4,9 +4,17 @@
 \alias{prepare_pairwise_annotation}
 \title{Prepare pairwise annotation data frame for plotting by assigning tiers and y positions}
 \usage{
-prepare_pairwise_annotation(data, pairwise_annotation, x, y, label,
-  values_to_exclude = c(), groups = c(), tier_width = 0.15,
-  scale = "default")
+prepare_pairwise_annotation(
+  data,
+  pairwise_annotation,
+  x,
+  y,
+  label,
+  values_to_exclude = c(),
+  groups = c(),
+  tier_width = 0.15,
+  scale = "default"
+)
 }
 \arguments{
 \item{data}{data frame containing dataset on which the annotations will be plotted}

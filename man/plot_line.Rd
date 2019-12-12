@@ -4,8 +4,7 @@
 \alias{plot_line}
 \title{Plot line graph}
 \usage{
-plot_line(data, x = NULL, y = NULL, color = NULL, group = NULL,
-  alpha = 0.5)
+plot_line(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
 \item{alpha}{}

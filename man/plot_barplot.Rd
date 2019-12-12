@@ -4,10 +4,22 @@
 \alias{plot_barplot}
 \title{Plot (stacked) barplot with annotations}
 \usage{
-plot_barplot(data, x, y, label = NULL, color = NULL, fill = NULL,
-  stacked = TRUE, constant_height = TRUE, facet_rows = c(),
-  facet_columns = c(), facet_type = "grid", facet_switch = NULL,
-  facet_scales = "free", nrow = 1)
+plot_barplot(
+  data,
+  x,
+  y,
+  label = NULL,
+  color = NULL,
+  fill = NULL,
+  stacked = TRUE,
+  constant_height = TRUE,
+  facet_rows = c(),
+  facet_columns = c(),
+  facet_type = "grid",
+  facet_switch = NULL,
+  facet_scales = "free",
+  nrow = 1
+)
 }
 \arguments{
 \item{data}{data frame containing dataset to use for plotting}

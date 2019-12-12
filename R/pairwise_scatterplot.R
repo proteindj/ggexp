@@ -23,6 +23,7 @@
 plot_pairwise_scatterplot = function(data,
                             x = colnames(data %>% select_if(is.numeric)),
                             y = x,
+                            combination_group = NULL,
                             color = NULL,
                             shape = NULL,
                             size = NULL,
@@ -45,10 +46,22 @@ plot_pairwise_scatterplot = function(data,
 
   combinations = expand_grid_unique(x, y)
 
+  if (!is.null(combination_group)) {
+
+    combination_group = tibble::enframe(combination_group)
+
+    combinations = combinations %>%
+      dplyr::left_join(combination_group, by = c("V1" = "name")) %>%
+      dplyr::left_join(combination_group, by = c("V2" = "name")) %>%
+      filter(value.x == value.y)
+
+  }
+
   data = purrr::pmap_dfr(combinations, ~{
-    x = ..1
-    y = ..2
-    cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2), data[, c(color, size, facet_rows, facet_columns), drop = FALSE])}
+      x = ..1
+      y = ..2
+      cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2), data[, c(color, size, facet_rows, facet_columns), drop = FALSE])
+    }
   )
 
   data$.xkey = factor(data$.xkey, levels = x)
