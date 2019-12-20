@@ -391,11 +391,11 @@ plot_density = function(data,
   if (!is.numeric(data[, color, drop = TRUE])) {
     plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
       geom_density(alpha = alpha) +
-      geom_rug()
+      geom_rug(alpha = 0.1)
   } else {
     plot = ggplot(data, aes_string(x = y, group = group)) +
       geom_density(alpha = alpha) +
-      geom_rug(aes_string(col = color, fill = color))
+      geom_rug(aes_string(col = color, fill = color), alpha = 0.1)
   }
   return(plot)
 }
