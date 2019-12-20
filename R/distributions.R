@@ -395,7 +395,7 @@ plot_density = function(data,
   } else {
     plot = ggplot(data, aes_string(x = y, group = group)) +
       geom_density(alpha = alpha) +
-      geom_rug(aes_string(col = color, fill = color), alpha = 0.1)
+      geom_rug(aes_string(col = color, fill = color), alpha = 0.3)
   }
   return(plot)
 }
@@ -427,6 +427,6 @@ plot_ridge = function(data,
     fill = x
   )) +
     ggridges::geom_density_ridges(alpha = alpha) +
-    geom_rug(alpha = 0.1, aes_string(color = color))
+    geom_rug(alpha = 0.3, aes_string(color = color))
   return(plot)
 }
