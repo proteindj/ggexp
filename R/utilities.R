@@ -115,11 +115,12 @@ plot_facets = function(plot,
     )
   } else {
     plot = plot + facet_wrap(
-      facets = c(facet_columns, facet_rows),
+      facets = c(facet_rows, facet_columns),
       nrow = nrow,
       scales = facet_scales,
       drop = TRUE,
-      switch = facet_switch
+      switch = NULL,
+      strip.position = "top"
     )
   }
   return(plot)
