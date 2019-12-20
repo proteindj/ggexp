@@ -15,6 +15,7 @@
 #' @param nrow numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"
 #'
 #' @import ggplot2
+#' @importFrom dplyr select_if
 #'
 #' @return ggplot object
 #' @export
@@ -46,7 +47,7 @@ plot_pairwise_scatterplot = function(data,
 
   combinations = expand_grid_unique(x, y)
 
-  if (!is.null(combination_group)) {
+  if (!is.null(combination_group) && facet_type == "wrap") {
 
     combination_group = tibble::enframe(combination_group)
 
@@ -94,9 +95,18 @@ plot_pairwise_scatterplot = function(data,
     labs(x = xlab, y = ylab) +
     geom_point(alpha = alpha)
 
+  print(head(data))
+
   if (length(palette) > 0) {
     plot = plot +
       palette
+  }
+
+  if (facet_type == "wrap") {
+    plot$data$xy = paste0("x: ", plot$data$.xkey, ", y: ", plot$data$.ykey)
+    facet_rows = setdiff(facet_rows, ".ykey")
+    facet_columns = setdiff(facet_columns, ".xkey")
+    facet_rows = c(facet_rows, "xy")
   }
 
   plot = plot_facets(plot, facet_rows, facet_columns, facet_type, facet_scales, facet_switch, nrow)

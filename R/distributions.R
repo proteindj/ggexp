@@ -207,8 +207,7 @@ plot_line = function(data,
                      alpha = 0.5) {
   plot = ggplot(data) +
     geom_line(alpha = alpha,
-              aes_string(x = x, y = y, group = group),
-              color = color) +
+              aes_string(x = x, y = y, group = group, color = color)) +
     geom_point(alpha = alpha,
                aes_string(x = x, y = y, col = color),
                shape = 1)
@@ -289,6 +288,7 @@ plot_quasirandom = function(data,
     geom_boxplot(
       alpha = 0,
       width = 0.3,
+      color = "black",
       outlier.size = 0,
       position = position_dodge(width = 1)
     )
@@ -388,9 +388,15 @@ plot_density = function(data,
   if (!is.null(group) && !is.null(color)) {
     data[, group] = interaction(data[, color, drop = TRUE], data[, group, drop = TRUE])
   }
-  plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
-    geom_density(alpha = alpha) +
-    geom_rug()
+  if (!is.numeric(data[, color, drop = TRUE])) {
+    plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
+      geom_density(alpha = alpha) +
+      geom_rug()
+  } else {
+    plot = ggplot(data, aes_string(x = y, group = group)) +
+      geom_density(alpha = alpha) +
+      geom_rug(aes_string(col = color, fill = color))
+  }
   return(plot)
 }
 
@@ -421,6 +427,6 @@ plot_ridge = function(data,
     fill = x
   )) +
     ggridges::geom_density_ridges(alpha = alpha) +
-    geom_rug(alpha = 0.1)
+    geom_rug(alpha = 0.1, aes_string(color = color))
   return(plot)
 }
