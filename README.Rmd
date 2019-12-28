@@ -58,8 +58,11 @@ data = data.frame(
       rnorm(200, 0, .1)
     )
   ),
-  "group" = rep(rep(c("a", "b", "c", "d", "e"), each = 200), 3),
-  "id" = rep(1:200, 15)
+  "group" = rep(rep(c(
+    "a", "b", "c", "d", "e"
+  ), each = 200), 3),
+  "id" = rep(1:200, 15),
+  "status" = rep(1:5, 600)
 )
 
 wilcox_results = data %>%
@@ -69,26 +72,97 @@ wilcox_results = data %>%
   tidyr::unnest(test)
 
 plot = ggplot(data, aes(x = group, y = value, color = group)) +
-  ggbeeswarm::geom_quasirandom(shape = 1, size = 1, alpha = 0.5) +
-  geom_boxplot(alpha = 0, width = 0.3, outlier.size = 0, position = position_dodge(width = 1)) +
-  facet_wrap(~feature, scales = "free") +
+  ggforce::geom_sina(shape = 1,
+                     size = 1,
+                     alpha = 0.5) +
+  geom_boxplot(
+    alpha = 0,
+    width = 0.3,
+    outlier.size = 0,
+    position = position_dodge(width = 1),
+    color = "firebrick"
+  ) +
+  facet_wrap(~ feature, scales = "free") +
   ggexp::theme_ggexp() +
   ggexp::get_palette()
 
-plot_pairwise_annotation(plot = plot, pairwise_annotation = wilcox_results, label = "p.adj.signif", values_to_exclude = "ns", tier_width = 0.08)
+plot_pairwise_annotation(
+  plot = plot,
+  pairwise_annotation = wilcox_results,
+  label = "p.adj.signif",
+  values_to_exclude = "ns",
+  tier_width = 0.08
+)
 ```
 
 
 ### `plot_distributions`
 This function creates very similar plots to the example shown above, but in a more convenient way by providing a single function call. It also includes a few additional useful features, such as annotating counts. We will recreate a similar plot as above using this, in a single function call. 
 ```{r plot_distributions, dpi=500,fig.width=12, fig.height=5}
-plot_distributions(data = data,
-                   pairwise_annotation = wilcox_results,
-                   x = "group",
-                   y = "value",
-                   color = "group",
-                   pairwise_annotation_label = "p.adj.signif",
-                   pairwise_annotation_exclude = "ns",
-                   facet_columns = "feature",
-                   tier_width = 0.08)
+plot_distributions(
+  data = data,
+  pairwise_annotation = wilcox_results,
+  x = "group",
+  y = "value",
+  color = "group",
+  pairwise_annotation_label = "p.adj.signif",
+  pairwise_annotation_exclude = "ns",
+  facet_columns = "feature",
+  tier_width = 0.08,
+  type = "sina"
+)
+```
+We can also use different plot styles. We use a subset of the data to show this:
+```{r plot_styles, dpi=500,fig.width=12, fig.height=7}
+data = data %>% dplyr::filter(feature == "feature_1")
+quasirandom = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "status",
+  facet_columns = "feature",
+  type = "quasirandom"
+) + labs(title = "quasirandom")
+sina = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "status",
+  facet_columns = "feature",
+  type = "sina"
+) + labs(title = "sina")
+line = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "status",
+  group = "id",
+  facet_columns = "feature",
+  type = "line"
+) + labs(title = "line")
+violin = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "group",
+  facet_columns = "feature",
+  type = "violin"
+) + labs(title = "violin")
+density = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "group",
+  facet_columns = "feature",
+  type = "density"
+) + labs(title = "density")
+ridge = plot_distributions(
+  data = data,
+  x = "group",
+  y = "value",
+  color = "group",
+  facet_columns = "feature",
+  type = "ridge"
+) + labs(title = "ridge")
+patchwork::wrap_plots(quasirandom, sina, line, violin, density, ridge, nrow = 2)
 ```

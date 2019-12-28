@@ -211,7 +211,6 @@ plot_line = function(data,
     geom_point(alpha = alpha,
                aes_string(x = x, y = y, col = color),
                shape = 1)
-
   return(plot)
 }
 
@@ -241,11 +240,13 @@ plot_sina = function(data,
     col = color,
     group = group
   )) +
-    ggforce::geom_sina(alpha = alpha, shape = 1) +
+    ggforce::geom_sina(alpha = alpha,
+                       shape = 1,
+                       position = position_dodge(width = 0)) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
-      color = "black",
+      color = "firebrick",
       outlier.size = 0
     )
 
@@ -282,17 +283,14 @@ plot_quasirandom = function(data,
       method = "tukeyDense",
       alpha = alpha,
       shape = 1,
-      dodge.width = 1,
-      position = position_dodge(width = 0.75)
+      position = position_dodge(width = 1)
     ) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
-      color = "black",
+      color = "firebrick",
       outlier.size = 0,
-      position = position_dodge(width = 1)
     )
-
   return(plot)
 }
 
@@ -322,12 +320,12 @@ plot_violin = function(data,
     col = color,
     group = group
   )) +
-    geom_violin(alpha = alpha, position = position_dodge(width = 1)) +
+    geom_violin(alpha = alpha) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
       outlier.size = 0,
-      position = position_dodge(width = 1)
+      color = "firebrick"
     )
   return(plot)
 }
@@ -391,11 +389,11 @@ plot_density = function(data,
   if (!is.numeric(data[, color, drop = TRUE])) {
     plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
       geom_density(alpha = alpha) +
-      geom_rug(alpha = 0.1)
+      geom_rug(alpha = 0.5)
   } else {
     plot = ggplot(data, aes_string(x = y, group = group)) +
       geom_density(alpha = alpha) +
-      geom_rug(aes_string(col = color, fill = color), alpha = 0.3)
+      geom_rug(aes_string(col = color, fill = color), alpha = 0.5)
   }
   return(plot)
 }
@@ -427,6 +425,6 @@ plot_ridge = function(data,
     fill = x
   )) +
     ggridges::geom_density_ridges(alpha = alpha) +
-    geom_rug(alpha = 0.3, aes_string(color = color))
+    geom_rug(alpha = 0.5, aes_string(color = color))
   return(plot)
 }
