@@ -20,7 +20,7 @@ get_palette = function(values = NULL, palette = c(), return_ggplot_scale = TRUE)
     palette_custom = ggplot2::scale_color_manual(
       values = palette_values,
       aesthetics = c("colour", "fill"),
-      drop = FALSE
+      drop = TRUE
     )
   } else if (!is.numeric(values)) {
     levels = unique(values[!values == "NA"])
@@ -35,7 +35,7 @@ get_palette = function(values = NULL, palette = c(), return_ggplot_scale = TRUE)
       palette_custom = ggplot2::scale_color_manual(
         values = palette_custom,
         aesthetics = c("colour", "fill"),
-        drop = FALSE
+        drop = TRUE
       )
     }
   } else {
@@ -111,7 +111,8 @@ plot_facets = function(plot,
       )),
       scales = facet_scales,
       drop = TRUE,
-      switch = facet_switch
+      switch = facet_switch,
+      space = "free"
     )
   } else {
     plot = plot + facet_wrap(

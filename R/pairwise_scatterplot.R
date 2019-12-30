@@ -48,20 +48,25 @@ plot_pairwise_scatterplot = function(data,
   combinations = expand_grid_unique(x, y)
 
   if (!is.null(combination_group) && facet_type == "wrap") {
+    combinations$V1 = as.character(combinations$V1)
+    combinations$V2 = as.character(combinations$V2)
 
     combination_group = tibble::enframe(combination_group)
+    combination_group$name = as.character(combination_group$name)
 
     combinations = combinations %>%
       dplyr::left_join(combination_group, by = c("V1" = "name")) %>%
       dplyr::left_join(combination_group, by = c("V2" = "name")) %>%
       filter(value.x == value.y)
-
+  } else {
+    combinations$group = "all"
   }
 
-  data = purrr::pmap_dfr(combinations, ~{
+  data = purrr::pmap_dfr(combinations, ~ {
       x = ..1
       y = ..2
-      cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2), data[, c(color, size, facet_rows, facet_columns), drop = FALSE])
+      z = ..3
+      cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2, combination_group = ..3), data[, setdiff(c(color, size, facet_rows, facet_columns), "combination_group"), drop = FALSE])
     }
   )
 
@@ -82,7 +87,9 @@ plot_pairwise_scatterplot = function(data,
     ylab = y
   }
 
-  if (is.null(color) | is.numeric(data[, color, drop = TRUE])) {
+  if (is.null(color)) {
+    palette = c()
+  } else if (is.numeric(data[, color, drop = TRUE])) {
     palette = c()
   } else {
     data[, color] = factor(as.character(data[, color, drop = TRUE]), levels = gtools::mixedsort(as.character(unique(data[, color, drop = TRUE]))))
@@ -95,18 +102,17 @@ plot_pairwise_scatterplot = function(data,
     labs(x = xlab, y = ylab) +
     geom_point(alpha = alpha)
 
-  print(head(data))
-
   if (length(palette) > 0) {
     plot = plot +
       palette
   }
 
+  plot$data$.xykey = paste0("x: ", plot$data$.xkey, ", y: ", plot$data$.ykey)
+
   if (facet_type == "wrap") {
-    plot$data$xy = paste0("x: ", plot$data$.xkey, ", y: ", plot$data$.ykey)
     facet_rows = setdiff(facet_rows, ".ykey")
     facet_columns = setdiff(facet_columns, ".xkey")
-    facet_rows = c(facet_rows, "xy")
+    facet_rows = c(facet_rows, ".xykey")
   }
 
   plot = plot_facets(plot, facet_rows, facet_columns, facet_type, facet_scales, facet_switch, nrow)
