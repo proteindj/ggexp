@@ -5,7 +5,6 @@
 #' @param y string scalar indicating column for y-axis
 #' @param color string scalar indicating column for color
 #' @param shape string scalar indicating column for shape
-#' @param size string scalar indicating column for size
 #' @param alpha numeric scalar for alpha of points
 #' @param facet_rows string vector indicating columns for faceting by row
 #' @param facet_columns string vector indicating columns for faceting by column
@@ -24,10 +23,10 @@
 plot_pairwise_scatterplot = function(data,
                             x = colnames(data %>% select_if(is.numeric)),
                             y = x,
-                            combination_group = NULL,
+                            combination_groups = c(),
+                            axis_annotations = NULL,
                             color = NULL,
                             shape = NULL,
-                            size = NULL,
                             alpha = 0.3,
                             facet_rows = c(),
                             facet_columns = c(),
@@ -38,37 +37,40 @@ plot_pairwise_scatterplot = function(data,
 
   axes_columns = intersect(c(x, y), colnames(data))
 
-  if (!is.null(size) && size == "NULL") {
-    size = NULL
-  }
-  if (!is.null(color) && color == "NULL") {
-    color = NULL
-  }
-
   combinations = expand_grid_unique(x, y)
 
-  if (!is.null(combination_group) && facet_type == "wrap") {
+  if (length(combination_groups) != 0 && facet_type == "wrap") {
     combinations$V1 = as.character(combinations$V1)
     combinations$V2 = as.character(combinations$V2)
 
-    combination_group = tibble::enframe(combination_group)
-    combination_group$name = as.character(combination_group$name)
+    axis_annotations$axis = as.character(axis_annotations$axis)
 
     combinations = combinations %>%
-      dplyr::left_join(combination_group, by = c("V1" = "name")) %>%
-      dplyr::left_join(combination_group, by = c("V2" = "name")) %>%
-      filter(value.x == value.y)
-  } else {
-    combinations$group = "all"
+      dplyr::left_join(axis_annotations, by = c("V1" = "axis")) %>%
+      dplyr::left_join(axis_annotations, by = c("V2" = "axis"))
+
+    for (group in combination_groups) {
+      combinations = combinations[combinations[, paste0(group, ".x"), drop = TRUE] ==
+                                    combinations[, paste0(group, ".y"), drop = TRUE], , drop = FALSE]
+    }
   }
 
   data = purrr::pmap_dfr(combinations, ~ {
       x = ..1
       y = ..2
-      z = ..3
-      cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2, combination_group = ..3), data[, setdiff(c(color, size, facet_rows, facet_columns), "combination_group"), drop = FALSE])
+      cbind(data.frame(.xvalue = data[, as.character(x), drop = TRUE], .yvalue = data[, as.character(y), drop = TRUE]), data.frame(.xkey = ..1, .ykey = ..2), data[, intersect(c(color, facet_rows, facet_columns), colnames(data)), drop = FALSE])
     }
   )
+
+  if (!is.null(axis_annotations)) {
+    data = data %>%
+      dplyr::left_join(axis_annotations, by = c(".xkey" = "axis")) %>%
+      dplyr::left_join(axis_annotations, by = c(".ykey" = "axis"))
+  }
+
+  for (group in combination_groups) {
+    data[, group] = data[, paste0(group, ".x"), drop = TRUE]
+  }
 
   data$.xkey = factor(data$.xkey, levels = x)
   data$.ykey = factor(data$.ykey, levels = y)
@@ -97,10 +99,10 @@ plot_pairwise_scatterplot = function(data,
   }
 
   plot = data %>%
-    ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color, size = size)) +
+    ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color)) +
     theme_ggexp() +
     labs(x = xlab, y = ylab) +
-    geom_point(alpha = alpha)
+    geom_count(alpha = alpha)
 
   if (length(palette) > 0) {
     plot = plot +

@@ -12,11 +12,7 @@ analysis with publication-quality figures.
     minimize the number of tiers needed to plot the comparisons.
   - `plot_distributions`: Plot distributions with flexibility of quickly
     changing plot attributes in a one-liner.
-  - `plot_pairwise_scatterplot`: Plot a pairwise scatterplot while
-    simulatenously faceting based on other columns
-    (`ggforce::facet_matrix` offers something similar now with even more
-    functionality allowing discrete axes, but cannot facet on any
-    variables except those to generate the x- and y-axes).
+  - `plot_pairwise_scatterplot`: Plot a pairwise scatterplot.
   - `plot_barplot`: Plot a barplot with annotations and easily switch
     between stacked, unstacked and adjust text annotations accordingly.
   - `theme_ggexp`: Variation on `ggplot2::theme_classic` with a blank
@@ -26,11 +22,10 @@ analysis with publication-quality figures.
 
 ### `plot_pairwise_annotation`
 
-We generate some data with data sampled from a Gaussian with known mean
-and std dev. This consists of a total of 5 groups to compare across for
-a total of 3 features. For each of these features, we compute the
-p-values for pairwise Wilcoxon rank-sum test, and annotate these
-comparisons on a `geom_sina` plot.
+We generate some random data for illustration purposes. This consists of
+a total of 5 groups to compare across for a total of 3 features. For
+each of these features, we compute the p-values for pairwise Wilcoxon
+rank-sum test, and annotate these comparisons on a `geom_sina` plot.
 
 ``` r
 library(ggexp)
@@ -184,3 +179,54 @@ patchwork::wrap_plots(quasirandom, sina, line, violin, density, ridge, nrow = 2)
 ```
 
 ![](tools/README-plot_styles-1.png)<!-- -->
+
+### `plot_pairwise_scatterplot`
+
+Often we will want to visualize the relationship between a set of
+variables in a pairwise manner. However, we may also want to restrict
+the variable pairs that we visualize to keep things concise.
+Additionally, we may want to facet on other features that give us
+example-level information.
+
+For example, let’s consider the following dataset.
+
+``` r
+data = data.frame(
+  A_1 = rnorm(100),
+  A_2 = rnorm(100),
+  A_3 = rnorm(100),
+  B_1 = rnorm(100, 2, 1),
+  B_2 = rnorm(100, 2, 1),
+  disease = sample(c("diseased", "healthy"), 100, TRUE)
+)
+```
+
+We also have some information about the features. We will call these
+axis annotations.
+
+``` r
+axis_annotations = data.frame(
+  axis = c("A_1", "A_2", "A_3", "B_1", "B_2"),
+  feature_group = c(rep("A", 3), rep("B", 2))
+)
+```
+
+Based on the `feature_group` we want to restrict the pairwise
+scatterplots made.
+
+In the following plot, we make the pairwise scatterplots restricted on
+`feature_group` and faceted by the `disease` of the row.
+
+``` r
+plot_pairwise_scatterplot(
+  data = data,
+  combination_groups = "feature_group",
+  axis_annotations = axis_annotations,
+  facet_columns = "disease",
+  facet_type = "wrap",
+  nrow = 2,
+  color = "feature_group"
+)
+```
+
+![](tools/README-plot_pairwise_scatterplot_3-1.png)<!-- -->

@@ -111,8 +111,7 @@ plot_facets = function(plot,
       )),
       scales = facet_scales,
       drop = TRUE,
-      switch = facet_switch,
-      space = "free"
+      switch = facet_switch
     )
   } else {
     plot = plot + facet_wrap(
