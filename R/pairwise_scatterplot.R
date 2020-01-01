@@ -104,7 +104,7 @@ plot_pairwise_scatterplot = function(data,
       palette
   }
 
-  plot$data$.xykey = paste0("x: ", plot$data$.xkey, ", y: ", plot$data$.ykey)
+  plot$data$.xykey = paste0("x: ", plot$data$.xkey, "\ny: ", plot$data$.ykey)
 
   if (facet_type == "wrap") {
     facet_rows = setdiff(facet_rows, ".ykey")
