@@ -64,12 +64,7 @@ plot_pairwise_scatterplot = function(data,
 
   if (!is.null(axis_annotations)) {
     data = data %>%
-      dplyr::left_join(axis_annotations, by = c(".xkey" = "axis")) %>%
-      dplyr::left_join(axis_annotations, by = c(".ykey" = "axis"))
-  }
-
-  for (group in combination_groups) {
-    data[, group] = data[, paste0(group, ".x"), drop = TRUE]
+      dplyr::left_join(axis_annotations[, c("axis", combination_groups), drop = FALSE], by = c(".xkey" = "axis"))
   }
 
   data$.xkey = factor(data$.xkey, levels = x)
@@ -102,7 +97,7 @@ plot_pairwise_scatterplot = function(data,
     ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color)) +
     theme_ggexp() +
     labs(x = xlab, y = ylab) +
-    geom_count(alpha = alpha)
+    geom_point(alpha = alpha)
 
   if (length(palette) > 0) {
     plot = plot +
