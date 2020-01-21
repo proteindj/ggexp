@@ -2,25 +2,23 @@
 #'
 #' @param data data frame containing dataset to use for plotting
 #' @param pairwise_annotation data frame containing pairwise annotations
-#' @param type string scaler indicating type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"
-#' @param x string scalar indicating column for x-axis
-#' @param y string scalar indicating column for y-axis
-#' @param group string scalar indicating column for group aesthethic, used if type == "line"
-#' @param color string scalar indicating column for color
-#' @param alpha numeric scalar for alpha of points
-#' @param scale string scalar that is either "default" for linearly-spaced scale or "log" for log-spaced
-#' @param lower_quantile numeric scalar indicating lower quantile of values, beyond which data points are filtered from plot
-#' @param upper_quantile numeric scalar indicating uower quantile of values, beyond which data points are filtered from plot
-#' @param tier_width numeric scalar indicating relative distance between tiers for pairwise annotations
-#' @param annotate_counts boolean scalar indicating whether to annotate counts per group or not
-#' @param pairwise_annotation_label string scalar indicating column of pairwise_annotation data to use for annotation text
-#' @param pairwise_annotation_exclude string vector indicating values to not annotate on pairwise annotations
-#' @param facet_rows string vector indicating columns for faceting by row
-#' @param facet_columns string vector indicating columns for faceting by column
-#' @param facet_type string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
-#' @param facet_switch string scalar that is either NULL, "both", "x", or "y", same as switch argument in facet calls
-#' @param facet_scales string scalar that is either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
-#' @param nrow numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"
+#' @param type type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"
+#' @param x column for x-axis
+#' @param y column for y-axis
+#' @param group column for group aesthethic, used if type == "line"
+#' @param color column for color
+#' @param alpha alpha of points
+#' @param scale either "default" for linearly-spaced scale or "log" for log-spaced
+#' @param tier_width relative distance between tiers for pairwise annotations, between 0 and 1
+#' @param annotate_counts boolean whether to annotate counts per group or not
+#' @param pairwise_annotation_label column of pairwise_annotation data to use for annotation text
+#' @param pairwise_annotation_exclude values to not annotate on pairwise annotations
+#' @param facet_rows columns for faceting by row
+#' @param facet_columns columns for faceting by column
+#' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
+#' @param facet_switch either NULL, "both", "x", or "y", same as switch argument in facet calls
+#' @param facet_scales either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
+#' @param nrow number of rows in plot, only applies if facet_type == "wrap"
 #'
 #' @import ggplot2
 #'
@@ -38,8 +36,6 @@ plot_distributions = function(data,
                               color = NULL,
                               alpha = 0.5,
                               scale = "default",
-                              lower_quantile = 0,
-                              upper_quantile = 1,
                               tier_width = 0.16,
                               annotate_counts = TRUE,
                               pairwise_annotation_label = "p_signif",
@@ -56,10 +52,6 @@ plot_distributions = function(data,
                                     color,
                                     group,
                                     alpha)
-
-  if (!is.null(color)) {
-    plot = plot + get_palette(data[, color, drop = TRUE])
-  }
 
   plot = plot_scale(plot, scale, type)
 
@@ -95,17 +87,18 @@ plot_distributions = function(data,
 
 #' Annotate number of values per group on plot
 #'
-#' @param plot
-#' @param x
-#' @param counts_annotation
-#' @param annotate_counts
-#' @param type
+#' @param plot Plot with discrete x-axis to annotate counts on
+#' @param x Column for x-axis
+#' @param counts_annotation Annotation returned from compute_counts_annotation_data
+#' @param annotate_counts Boolean whether to annotate counts or not
+#' @param type Type of plot, same as plot_distributions type
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_counts_annotation = function(plot,
                                   x,
                                   counts_annotation,
@@ -146,34 +139,38 @@ plot_counts_annotation = function(plot,
 
 #' Compute number of values per group for count annotation
 #'
-#' @param data
-#' @param x
-#' @param facet_rows
-#' @param facet_columns
+#' @param data Data frame from which to count observations
+#' @param x Column for x-axis
+#' @param groups Groups to facet by
+#'
+#' @importFrom stats na.omit
+#' @importFrom dplyr group_by tally
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 compute_counts_annotation_data = function(data, x, groups) {
   counts = data[, unique(c(x, groups)), drop = FALSE] %>%
-    stats::na.omit()
+    na.omit()
   counts = counts %>%
-    dplyr::group_by(.dots = unique(c(x, groups))) %>%
-    dplyr::tally()
+    group_by(.dots = unique(c(x, groups))) %>%
+    tally()
   return(counts)
 }
 
 #' Transform scale based on scale type and plot type
 #'
-#' @param plot
-#' @param scale
-#' @param type
+#' @param plot ggplot object
+#' @param scale Either "log" or "default"
+#' @param type Plot type, same as plot_distributions type
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_scale = function(plot, scale, type) {
   if (scale == "log") {
     plot = plot +
@@ -187,18 +184,19 @@ plot_scale = function(plot, scale, type) {
 
 #' Plot line graph
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - line connects by this variable
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_line = function(data,
                      x = NULL,
                      y = NULL,
@@ -216,18 +214,20 @@ plot_line = function(data,
 
 #' Plot sina plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
+#' @importFrom ggforce geom_sina
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_sina = function(data,
                      x = NULL,
                      y = NULL,
@@ -240,7 +240,7 @@ plot_sina = function(data,
     col = color,
     group = group
   )) +
-    ggforce::geom_sina(alpha = alpha,
+    geom_sina(alpha = alpha,
                        shape = 1,
                        position = position_dodge(width = 0)) +
     geom_boxplot(
@@ -255,18 +255,20 @@ plot_sina = function(data,
 
 #' Plot quasirandom plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
+#' @importFrom  ggbeeswarm geom_quasirandom
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_quasirandom = function(data,
                             x = NULL,
                             y = NULL,
@@ -279,7 +281,7 @@ plot_quasirandom = function(data,
     col = color,
     group = group
   )) +
-    ggbeeswarm::geom_quasirandom(
+    geom_quasirandom(
       method = "tukeyDense",
       alpha = alpha,
       shape = 1,
@@ -296,18 +298,19 @@ plot_quasirandom = function(data,
 
 #' Plot violin plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_violin = function(data,
                        x = NULL,
                        y = NULL,
@@ -332,18 +335,19 @@ plot_violin = function(data,
 
 #' Plot box and whiskers plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_box = function(data,
                     x = NULL,
                     y = NULL,
@@ -365,18 +369,19 @@ plot_box = function(data,
 
 #' Plot density plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_density = function(data,
                         x = NULL,
                         y = NULL,
@@ -400,18 +405,20 @@ plot_density = function(data,
 
 #' Plot ridge plot
 #'
-#' @param data
-#' @param x
-#' @param y
-#' @param color
-#' @param group
-#' @param alpha
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
 #'
 #' @import ggplot2
+#' @importFrom ggridges geom_density_ridges
 #'
 #' @return
 #'
 #' @examples
+#' NULL
 plot_ridge = function(data,
                       x = NULL,
                       y = NULL,
@@ -424,7 +431,7 @@ plot_ridge = function(data,
     col = x,
     fill = x
   )) +
-    ggridges::geom_density_ridges(alpha = alpha) +
+    geom_density_ridges(alpha = alpha) +
     geom_rug(alpha = 0.5, aes_string(color = color))
   return(plot)
 }

@@ -14,11 +14,24 @@ plot_quasirandom(
 )
 }
 \arguments{
-\item{alpha}{}
+\item{data}{Data frame for plotting}
+
+\item{x}{Column for x-axis}
+
+\item{y}{Column for y-axis}
+
+\item{color}{Column to color points by}
+
+\item{group}{Column to group points by - not relevant for this function}
+
+\item{alpha}{Alpha for each point}
 }
 \value{
 
 }
 \description{
 Plot quasirandom plot
+}
+\examples{
+NULL
 }

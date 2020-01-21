@@ -16,7 +16,21 @@ prepare_pairwise_annotation_single_group(
 )
 }
 \arguments{
-\item{scale}{}
+\item{data}{data frame containing dataset on which the annotations will be plotted}
+
+\item{pairwise_annotation}{data frame containing pairwise annotations (for example, pairwise statistical tests)}
+
+\item{y}{column for y-axis}
+
+\item{label}{column for text annotation}
+
+\item{values_to_exclude}{values to not annotate (for example, "ns" for statistical tests)}
+
+\item{tier_width}{relative distance between tiers for pairwise annotations}
+
+\item{scale}{either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced}
+
+\item{groups}{columns to group by before assigning optimal y positions}
 }
 \value{
 

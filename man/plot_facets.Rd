@@ -6,12 +6,12 @@
 \usage{
 plot_facets(
   plot,
-  facet_rows,
-  facet_columns,
-  facet_type,
-  facet_scales,
-  facet_switch,
-  nrow
+  facet_rows = c(),
+  facet_columns = c(),
+  facet_type = "grid",
+  facet_scales = NULL,
+  facet_switch = NULL,
+  nrow = NULL
 )
 }
 \arguments{

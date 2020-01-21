@@ -83,8 +83,7 @@ plot = ggplot(data, aes(x = group, y = value, color = group)) +
     color = "firebrick"
   ) +
   facet_wrap(~ feature, scales = "free") +
-  ggexp::theme_ggexp() +
-  ggexp::get_palette()
+  ggexp::theme_ggexp()
 
 plot_pairwise_annotation(
   plot = plot,

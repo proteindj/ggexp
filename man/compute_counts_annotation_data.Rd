@@ -7,11 +7,18 @@
 compute_counts_annotation_data(data, x, groups)
 }
 \arguments{
-\item{facet_columns}{}
+\item{data}{Data frame from which to count observations}
+
+\item{x}{Column for x-axis}
+
+\item{groups}{Groups to facet by}
 }
 \value{
 
 }
 \description{
 Compute number of values per group for count annotation
+}
+\examples{
+NULL
 }

@@ -7,11 +7,24 @@
 plot_line(data, x = NULL, y = NULL, color = NULL, group = NULL, alpha = 0.5)
 }
 \arguments{
-\item{alpha}{}
+\item{data}{Data frame for plotting}
+
+\item{x}{Column for x-axis}
+
+\item{y}{Column for y-axis}
+
+\item{color}{Column to color points by}
+
+\item{group}{Column to group points by - line connects by this variable}
+
+\item{alpha}{Alpha for each point}
 }
 \value{
 
 }
 \description{
 Plot line graph
+}
+\examples{
+NULL
 }

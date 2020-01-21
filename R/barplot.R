@@ -3,18 +3,18 @@
 #' This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 #'
 #' @param data data frame containing dataset to use for plotting
-#' @param x string scalar indicating column for x-axis
-#' @param y string scalar indicating column for y-axis
-#' @param label string scalar indicating column for text annotation
-#' @param color string scalar indicating column for color
-#' @param stacked boolean indicating whether result should be a stacked barplot or not
-#' @param constant_height boolean indicating whether stacked bars should have constant height (proportions plotted)
-#' @param facet_rows string vector indicating columns for faceting by row
-#' @param facet_columns string vector indicating columns for faceting by column
-#' @param facet_type string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
-#' @param facet_switch string scalar that is either NULL, "both", "x", or "y", same as switch argument in facet calls
-#' @param facet_scales string scalar that is either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
-#' @param nrow numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"
+#' @param x column for x-axis
+#' @param y column for y-axis
+#' @param label column for text annotation
+#' @param color column for color
+#' @param stacked boolean whether result should be a stacked barplot or not
+#' @param constant_height boolean whether stacked bars should have constant height (proportions plotted)
+#' @param facet_rows columns for faceting by row
+#' @param facet_columns columns for faceting by column
+#' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
+#' @param facet_switch either NULL, "both", "x", or "y", same as switch argument in facet calls
+#' @param facet_scales either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
+#' @param nrow number of rows in plot, only applies if facet_type == "wrap"
 #'
 #' @import ggplot2
 #'
@@ -22,7 +22,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' library(dplyr)
 #'
 #' data = mtcars %>%
@@ -45,6 +44,7 @@ plot_barplot = function(data,
                         fill = NULL,
                         stacked = TRUE,
                         constant_height = TRUE,
+                        text_size = 3,
                         facet_rows = c(),
                         facet_columns = c(),
                         facet_type = "grid",
@@ -53,15 +53,6 @@ plot_barplot = function(data,
                         nrow = 1) {
 
   data[, x] = factor(data[, x, drop = TRUE], levels = gtools::mixedsort(unique(data[, x, drop = TRUE])))
-
-  if (!is.null(color)) {
-    if (!is.numeric(data[, color, drop = TRUE])) {
-      data[, color] = factor(data[, color, drop = TRUE], levels = gtools::mixedsort(unique(data[, color, drop = TRUE])))
-      palette = get_palette(data[, color, drop = TRUE])
-    }
-  } else {
-    palette = c()
-  }
 
   if (!is.null(label)) {
     if (is.numeric(data[, label, drop = TRUE])) {
@@ -79,17 +70,11 @@ plot_barplot = function(data,
     ) +
     theme_ggexp()
 
-  if (!is.null(color)) {
-    if (!is.numeric(data[, color, drop = TRUE])) {
-      plot = plot + palette
-    }
-  }
-
   if (!is.null(label)) {
     if (stacked) {
-      plot = plot + geom_text(aes_string(label = label), position = get(paste0("position_", stack_or_fill))(vjust = 0.5), show.legend = FALSE)
+      plot = plot + geom_text(aes_string(label = label), position = get(paste0("position_", stack_or_fill))(vjust = 0.5), show.legend = FALSE, size = text_size)
     } else {
-      plot = plot + geom_text(aes_string(label = label), position = position_dodge(width = 0.9), show.legend = FALSE)
+      plot = plot + geom_text(aes_string(label = label), position = position_dodge(width = 0.9), show.legend = FALSE, size = text_size)
     }
   }
 
@@ -102,5 +87,4 @@ plot_barplot = function(data,
                      nrow)
 
   return(plot)
-
 }

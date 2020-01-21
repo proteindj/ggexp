@@ -7,11 +7,14 @@
 assign_tiers(pairwise_annotation)
 }
 \arguments{
-\item{pairwise_annotation}{}
+\item{pairwise_annotation}{data frame with pairwise annotation to be plotted, must have columns group1 and group2}
 }
 \value{
 
 }
 \description{
 Assign tiers based on optimal plotting location to prevent one tier per comparison
+}
+\examples{
+NULL
 }

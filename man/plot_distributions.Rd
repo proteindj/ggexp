@@ -14,8 +14,6 @@ plot_distributions(
   color = NULL,
   alpha = 0.5,
   scale = "default",
-  lower_quantile = 0,
-  upper_quantile = 1,
   tier_width = 0.16,
   annotate_counts = TRUE,
   pairwise_annotation_label = "p_signif",
@@ -33,43 +31,39 @@ plot_distributions(
 
 \item{pairwise_annotation}{data frame containing pairwise annotations}
 
-\item{type}{string scaler indicating type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"}
+\item{type}{type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"}
 
-\item{x}{string scalar indicating column for x-axis}
+\item{x}{column for x-axis}
 
-\item{y}{string scalar indicating column for y-axis}
+\item{y}{column for y-axis}
 
-\item{group}{string scalar indicating column for group aesthethic, used if type == "line"}
+\item{group}{column for group aesthethic, used if type == "line"}
 
-\item{color}{string scalar indicating column for color}
+\item{color}{column for color}
 
-\item{alpha}{numeric scalar for alpha of points}
+\item{alpha}{alpha of points}
 
-\item{scale}{string scalar that is either "default" for linearly-spaced scale or "log" for log-spaced}
+\item{scale}{either "default" for linearly-spaced scale or "log" for log-spaced}
 
-\item{lower_quantile}{numeric scalar indicating lower quantile of values, beyond which data points are filtered from plot}
+\item{tier_width}{relative distance between tiers for pairwise annotations, between 0 and 1}
 
-\item{upper_quantile}{numeric scalar indicating uower quantile of values, beyond which data points are filtered from plot}
+\item{annotate_counts}{boolean whether to annotate counts per group or not}
 
-\item{tier_width}{numeric scalar indicating relative distance between tiers for pairwise annotations}
+\item{pairwise_annotation_label}{column of pairwise_annotation data to use for annotation text}
 
-\item{annotate_counts}{boolean scalar indicating whether to annotate counts per group or not}
+\item{pairwise_annotation_exclude}{values to not annotate on pairwise annotations}
 
-\item{pairwise_annotation_label}{string scalar indicating column of pairwise_annotation data to use for annotation text}
+\item{facet_rows}{columns for faceting by row}
 
-\item{pairwise_annotation_exclude}{string vector indicating values to not annotate on pairwise annotations}
+\item{facet_columns}{columns for faceting by column}
 
-\item{facet_rows}{string vector indicating columns for faceting by row}
+\item{facet_type}{either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
 
-\item{facet_columns}{string vector indicating columns for faceting by column}
+\item{facet_scales}{either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
 
-\item{facet_type}{string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
+\item{facet_switch}{either NULL, "both", "x", or "y", same as switch argument in facet calls}
 
-\item{facet_scales}{string scalar that is either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
-
-\item{facet_switch}{string scalar that is either NULL, "both", "x", or "y", same as switch argument in facet calls}
-
-\item{nrow}{numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"}
+\item{nrow}{number of rows in plot, only applies if facet_type == "wrap"}
 }
 \value{
 ggplot object

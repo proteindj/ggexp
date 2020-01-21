@@ -7,11 +7,18 @@
 plot_scale(plot, scale, type)
 }
 \arguments{
-\item{type}{}
+\item{plot}{ggplot object}
+
+\item{scale}{Either "log" or "default"}
+
+\item{type}{Plot type, same as plot_distributions type}
 }
 \value{
 
 }
 \description{
 Transform scale based on scale type and plot type
+}
+\examples{
+NULL
 }

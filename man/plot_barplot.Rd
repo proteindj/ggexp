@@ -13,6 +13,7 @@ plot_barplot(
   fill = NULL,
   stacked = TRUE,
   constant_height = TRUE,
+  text_size = 3,
   facet_rows = c(),
   facet_columns = c(),
   facet_type = "grid",
@@ -24,29 +25,29 @@ plot_barplot(
 \arguments{
 \item{data}{data frame containing dataset to use for plotting}
 
-\item{x}{string scalar indicating column for x-axis}
+\item{x}{column for x-axis}
 
-\item{y}{string scalar indicating column for y-axis}
+\item{y}{column for y-axis}
 
-\item{label}{string scalar indicating column for text annotation}
+\item{label}{column for text annotation}
 
-\item{color}{string scalar indicating column for color}
+\item{color}{column for color}
 
-\item{stacked}{boolean indicating whether result should be a stacked barplot or not}
+\item{stacked}{boolean whether result should be a stacked barplot or not}
 
-\item{constant_height}{boolean indicating whether stacked bars should have constant height (proportions plotted)}
+\item{constant_height}{boolean whether stacked bars should have constant height (proportions plotted)}
 
-\item{facet_rows}{string vector indicating columns for faceting by row}
+\item{facet_rows}{columns for faceting by row}
 
-\item{facet_columns}{string vector indicating columns for faceting by column}
+\item{facet_columns}{columns for faceting by column}
 
-\item{facet_type}{string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
+\item{facet_type}{either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
 
-\item{facet_switch}{string scalar that is either NULL, "both", "x", or "y", same as switch argument in facet calls}
+\item{facet_switch}{either NULL, "both", "x", or "y", same as switch argument in facet calls}
 
-\item{facet_scales}{string scalar that is either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
+\item{facet_scales}{either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
 
-\item{nrow}{numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"}
+\item{nrow}{number of rows in plot, only applies if facet_type == "wrap"}
 }
 \value{
 ggplot object
@@ -55,7 +56,6 @@ ggplot object
 This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 }
 \examples{
-
 library(dplyr)
 
 data = mtcars \%>\%

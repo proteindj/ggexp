@@ -68,12 +68,12 @@ plot_pairwise_annotation = function(plot,
 #'
 #' @param data data frame containing dataset on which the annotations will be plotted
 #' @param pairwise_annotation data frame containing pairwise annotations (for example, pairwise statistical tests)
-#' @param y string scalar indicating column for y-axis
-#' @param label string scalar indicating column for text annotation
-#' @param values_to_exclude string vector indicating values to not annotate (for example, "ns" for statistical tests)
-#' @param groups string vector of columns to group by before assigning optimal y positions
-#' @param tier_width numeric scalar indicating relative distance between tiers for pairwise annotations
-#' @param scale string scalar that is either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
+#' @param y column for y-axis
+#' @param label column for text annotation
+#' @param values_to_exclude values to not annotate (for example, "ns" for statistical tests)
+#' @param groups columns to group by before assigning optimal y positions
+#' @param tier_width relative distance between tiers for pairwise annotations
+#' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
 #'
@@ -116,13 +116,14 @@ prepare_pairwise_annotation = function(data,
 
 #' Prepare pairwise annotation data frame for plotting by assigning tiers and y positions for a single group
 #'
-#' @param data
-#' @param pairwise_annotation
-#' @param y
-#' @param label
-#' @param values_to_exclude
-#' @param tier_width
-#' @param scale
+#' @param data data frame containing dataset on which the annotations will be plotted
+#' @param pairwise_annotation data frame containing pairwise annotations (for example, pairwise statistical tests)
+#' @param y column for y-axis
+#' @param label column for text annotation
+#' @param values_to_exclude values to not annotate (for example, "ns" for statistical tests)
+#' @param groups columns to group by before assigning optimal y positions
+#' @param tier_width relative distance between tiers for pairwise annotations
+#' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
 #'
@@ -168,45 +169,12 @@ add_group_numbers = function(pairwise_annotation, data, x) {
 
 #' Assign tiers based on optimal plotting location to prevent one tier per comparison
 #'
-#' @param pairwise_annotation
+#' @param pairwise_annotation data frame with pairwise annotation to be plotted, must have columns group1 and group2
 #'
 #' @return
 #'
 #' @examples
-# assign_tiers = function(pairwise_annotation) {
-#   if (nrow(pairwise_annotation) > 0) {
-#     pairwise_annotation = pairwise_annotation %>%
-#       dplyr::mutate(difference = abs(group2_num - group1_num)) %>%
-#       dplyr::arrange(difference, pmin(group1_num, group2_num)) %>%
-#       dplyr::mutate(rank = seq(1, nrow(.), by = 1)) %>%
-#       dplyr::mutate(tier = 1)
-#     for (i in 1:nrow(pairwise_annotation)) {
-#       K = as.numeric(pairwise_annotation[i, "rank"])
-#       G1 = min(as.numeric(pairwise_annotation[i, "group1_num"]),
-#                as.numeric(pairwise_annotation[i, "group2_num"]))
-#       G2 = max(as.numeric(pairwise_annotation[i, "group1_num"]),
-#                as.numeric(pairwise_annotation[i, "group2_num"]))
-#       options = c()
-#       for (j in 1:nrow(pairwise_annotation)) {
-#         k = as.numeric(pairwise_annotation[j, "rank"])
-#         g1 = min(as.numeric(pairwise_annotation[j, "group1_num"]),
-#                  as.numeric(pairwise_annotation[j, "group2_num"]))
-#         g2 = max(as.numeric(pairwise_annotation[j, "group1_num"]),
-#                  as.numeric(pairwise_annotation[j, "group2_num"]))
-#         t = as.numeric(pairwise_annotation[j, "tier"])
-#         if (K > k & ((G1 < g1 & g1 < G2) | (G1 < g2 & g2 < G2))) {
-#           opt = t + 1
-#         } else {
-#           opt = 0
-#         }
-#         options[j] = opt
-#       }
-#       tier = max(options)
-#       pairwise_annotation[i, "tier"] = tier
-#     }
-#   }
-#   return(pairwise_annotation)
-# }
+#' NULL
 assign_tiers = function(pairwise_annotation) {
   if (nrow(pairwise_annotation) > 0) {
     pairwise_annotation = pairwise_annotation %>%

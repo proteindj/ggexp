@@ -8,7 +8,7 @@ plot_pairwise_scatterplot(
   data,
   x = colnames(data \%>\% select_if(is.numeric)),
   y = x,
-  combination_groups = NULL,
+  combination_groups = c(),
   axis_annotations = NULL,
   color = NULL,
   shape = NULL,
@@ -23,35 +23,36 @@ plot_pairwise_scatterplot(
 )
 }
 \arguments{
-\item{data}{data frame containing dataset to use for plotting}
+\item{data}{Data frame to plot}
 
-\item{x}{string scalar indicating column for x-axis}
+\item{x}{Columns to use for x-axis}
 
-\item{y}{string scalar indicating column for y-axis}
+\item{y}{Columns to use for y-axis}
 
-\item{color}{string scalar indicating column for color}
+\item{color}{Column for color}
 
-\item{shape}{string scalar indicating column for shape}
+\item{shape}{Column for shape}
 
-\item{size}{string scalar indicating column for size}
+\item{alpha}{Numeric value between 0 and 1 for alpha}
 
-\item{alpha}{numeric scalar for alpha of points}
+\item{facet_rows}{Columns to facet on}
 
-\item{facet_rows}{string vector indicating columns for faceting by row}
+\item{facet_columns}{Columns to facet on}
 
-\item{facet_columns}{string vector indicating columns for faceting by column}
+\item{facet_type}{Either "wrap" or "grid", same as ggplot}
 
-\item{facet_type}{string scalar that is either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
+\item{facet_scales}{Either NULL, "fixed", "free", "free_x", "free_y", same as ggplot}
 
-\item{facet_scales}{string scalar that is either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
+\item{facet_switch}{Either NULL, "x", "y", "both", same as ggplot}
 
-\item{facet_switch}{string scalar that is either NULL, "both", "x", or "y", same as switch argument in facet calls}
-
-\item{nrow}{numeric scalar indicating the number of rows in plot, only applies if facet_type == "wrap"}
+\item{nrow}{Number of rows if facet_type is "wrap"}
 }
 \value{
 ggplot object
 }
 \description{
 Plot pairwise scatterplots
+}
+\examples{
+NULL
 }
