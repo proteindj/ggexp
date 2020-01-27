@@ -20,10 +20,8 @@ plot_distributions(
   pairwise_annotation_exclude = c(),
   facet_rows = c(),
   facet_columns = c(),
-  facet_type = "wrap",
-  facet_scales = "free",
-  facet_switch = NULL,
-  nrow = 1
+  facet_type = "grid",
+  ...
 )
 }
 \arguments{
