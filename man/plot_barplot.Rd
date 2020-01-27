@@ -17,9 +17,7 @@ plot_barplot(
   facet_rows = c(),
   facet_columns = c(),
   facet_type = "grid",
-  facet_switch = NULL,
-  facet_scales = "free",
-  nrow = 1
+  ...
 )
 }
 \arguments{
@@ -43,11 +41,7 @@ plot_barplot(
 
 \item{facet_type}{either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
 
-\item{facet_switch}{either NULL, "both", "x", or "y", same as switch argument in facet calls}
-
-\item{facet_scales}{either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
-
-\item{nrow}{number of rows in plot, only applies if facet_type == "wrap"}
+\item{...}{params to either facet_wrap or facet_grid}
 }
 \value{
 ggplot object
@@ -56,6 +50,7 @@ ggplot object
 This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 }
 \examples{
+library(ggexp)
 library(dplyr)
 
 data = mtcars \%>\%

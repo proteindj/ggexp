@@ -1,7 +1,7 @@
 #' Plot pairwise annotation
 #'
 #' @param plot ggplot object with discrete x-axis
-#' @param pairwise_annotation data frame from prepare_pairwise_annotation
+#' @param pairwise_annotation data frame from .prepare_pairwise_annotation
 #' @param label string scalar indicating column for text annotation
 #'
 #' @import ggplot2
@@ -10,23 +10,24 @@
 #' @export
 #'
 #' @examples
+#' NULL
 plot_pairwise_annotation = function(plot,
                                     pairwise_annotation,
                                     label = "p_signif",
                                     values_to_exclude = c(),
                                     tier_width = 0.15,
                                     scale = "default") {
-
   x = plot$labels$x
   y = plot$labels$y
 
   if (is(plot$facet, "FacetGrid")) {
-    groups = c(names(plot$facet$params$rows), names(plot$facet$params$cols))
+    groups = c(names(plot$facet$params$rows),
+               names(plot$facet$params$cols))
   } else {
     groups = names(plot$facet$params$facets)
   }
 
-  pairwise_annotation = prepare_pairwise_annotation(
+  pairwise_annotation = .prepare_pairwise_annotation(
     plot$data,
     pairwise_annotation,
     x,
@@ -60,7 +61,7 @@ plot_pairwise_annotation = function(plot,
         vjust = -.05,
         inherit.aes = FALSE
       )
-    }
+  }
   return(plot)
 }
 
@@ -75,41 +76,46 @@ plot_pairwise_annotation = function(plot,
 #' @param tier_width relative distance between tiers for pairwise annotations
 #' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
+#' @importFrom dplyr left_join
+#' @importFrom tidyr nest unnest
+#' @importFrom purrr map2
+#'
 #' @return
 #'
 #' @examples
-prepare_pairwise_annotation = function(data,
-                                       pairwise_annotation,
-                                       x,
-                                       y,
-                                       label,
-                                       values_to_exclude = c(),
-                                       groups = c(),
-                                       tier_width = 0.15,
-                                       scale = "default") {
-  data = tidyr::nest(data, data = setdiff(colnames(data), groups))
-  pairwise_annotation = tidyr::nest(pairwise_annotation,
-                                    pairwise_annotation = setdiff(colnames(pairwise_annotation), groups))
+#' NULL
+.prepare_pairwise_annotation = function(data,
+                                        pairwise_annotation,
+                                        x,
+                                        y,
+                                        label,
+                                        values_to_exclude = c(),
+                                        groups = c(),
+                                        tier_width = 0.15,
+                                        scale = "default") {
+  data = nest(data, data = setdiff(colnames(data), groups))
+  pairwise_annotation = nest(pairwise_annotation,
+                             pairwise_annotation = setdiff(colnames(pairwise_annotation), groups))
 
-  combined = dplyr::left_join(data, pairwise_annotation, by = groups)
+  combined = left_join(data, pairwise_annotation, by = groups)
 
-  processed_annotation = purrr::map2(
+  processed_annotation = map2(
     combined$data,
     combined$pairwise_annotation,
-    ~ prepare_pairwise_annotation_single_group(.x,
-                                               .y,
-                                               x,
-                                               y,
-                                               label,
-                                               values_to_exclude,
-                                               tier_width,
-                                               scale)
+    ~ .prepare_pairwise_annotation_single_group(.x,
+                                                .y,
+                                                x,
+                                                y,
+                                                label,
+                                                values_to_exclude,
+                                                tier_width,
+                                                scale)
   )
 
   combined$processed_annotation = processed_annotation
 
   combined = combined[, c(groups, "processed_annotation"), drop = FALSE]
-  combined = tidyr::unnest(combined)
+  combined = unnest(combined)
 
   return(combined)
 }
@@ -128,19 +134,20 @@ prepare_pairwise_annotation = function(data,
 #' @return
 #'
 #' @examples
-prepare_pairwise_annotation_single_group = function(data,
-                                                    pairwise_annotation,
-                                                    x,
-                                                    y,
-                                                    label,
-                                                    values_to_exclude,
-                                                    tier_width,
-                                                    scale) {
-  pairwise_annotation = add_group_numbers(pairwise_annotation, data, x)
+#' NULL
+.prepare_pairwise_annotation_single_group = function(data,
+                                                     pairwise_annotation,
+                                                     x,
+                                                     y,
+                                                     label,
+                                                     values_to_exclude,
+                                                     tier_width,
+                                                     scale) {
+  pairwise_annotation = .add_group_numbers(pairwise_annotation, data, x)
   pairwise_annotation = pairwise_annotation[!(pairwise_annotation[, label, drop = TRUE] %in% values_to_exclude), ]
-  pairwise_annotation = assign_tiers(pairwise_annotation)
-  tier_mapping = map_tiers(data, pairwise_annotation, y, tier_width, scale)
-  pairwise_annotation = add_tier_mapping(pairwise_annotation, tier_mapping)
+  pairwise_annotation = .assign_tiers(pairwise_annotation)
+  tier_mapping = .map_tiers(data, pairwise_annotation, y, tier_width, scale)
+  pairwise_annotation = .add_tier_mapping(pairwise_annotation, tier_mapping)
   return(pairwise_annotation)
 }
 
@@ -150,17 +157,20 @@ prepare_pairwise_annotation_single_group = function(data,
 #'
 #' @param pairwise_annotation data frame with pairwise annotation to be plotted, must have columns group1 and group2
 #'
+#' @importFrom dplyr mutate
+#'
 #' @return
 #'
 #' @examples
-add_group_numbers = function(pairwise_annotation, data, x) {
+#' NULL
+.add_group_numbers = function(pairwise_annotation, data, x) {
   groups = factor(data[, x, drop = TRUE])
 
   mapping = data.frame(char = as.character(groups), as.numeric(groups))
 
   pairwise_annotation = pairwise_annotation %>%
-    dplyr::mutate(group1_num = mapping[match(.$group1, mapping$char), 2, drop = F][[1]]) %>%
-    dplyr::mutate(group2_num = mapping[match(.$group2, mapping$char), 2, drop = F][[1]])
+    mutate(group1_num = mapping[match(.$group1, mapping$char), 2, drop = F][[1]]) %>%
+    mutate(group2_num = mapping[match(.$group2, mapping$char), 2, drop = F][[1]])
 
   pairwise_annotation[, c("group1_num", "group2_num")] = t(apply(pairwise_annotation[, c("group1_num", "group2_num")], 1, sort))
 
@@ -171,20 +181,22 @@ add_group_numbers = function(pairwise_annotation, data, x) {
 #'
 #' @param pairwise_annotation data frame with pairwise annotation to be plotted, must have columns group1 and group2
 #'
+#' @importFrom dplyr arrange mutate
+#'
 #' @return
 #'
 #' @examples
 #' NULL
-assign_tiers = function(pairwise_annotation) {
+.assign_tiers = function(pairwise_annotation) {
   if (nrow(pairwise_annotation) > 0) {
     pairwise_annotation = pairwise_annotation %>%
-      dplyr::arrange(group2_num) %>%
-      dplyr::mutate(rank = seq(1, nrow(.), by = 1))
+      arrange(group2_num) %>%
+      mutate(rank = seq(1, nrow(.), by = 1))
     assigned = pairwise_annotation[c(), , drop = FALSE]
     unassigned = pairwise_annotation
     tier = 1
     while (nrow(unassigned) > 0) {
-      result = assign_tiers_unassigned(unassigned)
+      result = .assign_unassigned_tiers(unassigned)
       assigned = rbind(assigned, result$assigned %>% dplyr::mutate(tier = tier))
       unassigned = result$unassigned
       tier = tier + 1
@@ -194,7 +206,16 @@ assign_tiers = function(pairwise_annotation) {
   return(pairwise_annotation)
 }
 
-assign_tiers_unassigned = function(pairwise_annotation) {
+#' Assigned tiers that have not been assigned yet
+#'
+#' @param pairwise_annotation data frame with pairwise annotation to be plotted, must have columns group1_num and group2_num
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' NULL
+.assign_unassigned_tiers = function(pairwise_annotation) {
   assigned = pairwise_annotation[c(1), , drop = FALSE]
   unassigned = pairwise_annotation[c(), , drop = FALSE]
   right = pairwise_annotation[1, "group2_num"]
@@ -214,33 +235,34 @@ assign_tiers_unassigned = function(pairwise_annotation) {
 
 #' Map tiers to y positions based on the data
 #'
-#' @param data
-#' @param pairwise_annotation
-#' @param y
-#' @param tier_width
-#' @param scale
+#' @param data data frame containing dataset on which the annotations will be plotted
+#' @param pairwise_annotation result from .prepare_pairwise_annotations
+#' @param y column for y-axis
+#' @param tier_width relative distance between tiers for pairwise annotations
+#' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
 #'
 #' @examples
-map_tiers = function(data,
-                     pairwise_annotation,
-                     y,
-                     tier_width,
-                     scale) {
+#' NULL
+.map_tiers = function(data,
+                      pairwise_annotation,
+                      y,
+                      tier_width,
+                      scale) {
   if (nrow(pairwise_annotation) > 0) {
     tier_mapping = data.frame(tier = min(pairwise_annotation$tier):max(pairwise_annotation$tier))
 
     by = (max(data[, y]) - min(data[, y])) * tier_width
 
     if (scale == "log") {
-      seq_function = seq_log
+      seq_function = .seq_log
     } else {
       seq_function = seq
     }
 
     tier_mapping$y.position = seq_function(
-      from = max(data[, y]) + by/2,
+      from = max(data[, y]) + by / 2,
       by = by,
       length.out = (
         max(pairwise_annotation$tier) - min(pairwise_annotation$tier)
@@ -254,13 +276,14 @@ map_tiers = function(data,
 
 #' Add tier mapping to pairwise annotation data based on tier mapping
 #'
-#' @param pairwise_annotation
-#' @param tier_mapping
+#' @param pairwise_annotation data frame from .prepare_pairwise_annotation
+#' @param tier_mapping result from .map_tiers
 #'
 #' @return
 #'
 #' @examples
-add_tier_mapping = function(pairwise_annotation, tier_mapping) {
+#' NULL
+.add_tier_mapping = function(pairwise_annotation, tier_mapping) {
   if (nrow(pairwise_annotation) > 0) {
     if (nrow(tier_mapping) > 1) {
       pairwise_annotation$y.position = tier_mapping[match(pairwise_annotation$tier, tier_mapping$tier), 2, drop = F][[1]]
@@ -273,14 +296,15 @@ add_tier_mapping = function(pairwise_annotation, tier_mapping) {
 
 #' Sequence generation with equal distance in log space
 #'
-#' @param from
-#' @param by
-#' @param length.out
+#' @param from value to start from
+#' @param by distance between points
+#' @param length.out desired vector length
 #'
 #' @return
 #'
 #' @examples
-seq_log = function(from, by, length.out) {
+#' NULL
+.seq_log = function(from, by, length.out) {
   ys = c(from)
   while (length(ys) < length.out) {
     ys = c(ys, max(ys) * 2 ^ by)

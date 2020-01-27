@@ -16,7 +16,7 @@ plot_pairwise_annotation(
 \arguments{
 \item{plot}{ggplot object with discrete x-axis}
 
-\item{pairwise_annotation}{data frame from prepare_pairwise_annotation}
+\item{pairwise_annotation}{data frame from .prepare_pairwise_annotation}
 
 \item{label}{string scalar indicating column for text annotation}
 }
@@ -25,4 +25,7 @@ ggplot object
 }
 \description{
 Plot pairwise annotation
+}
+\examples{
+NULL
 }

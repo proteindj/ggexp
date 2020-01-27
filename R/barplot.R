@@ -12,9 +12,7 @@
 #' @param facet_rows columns for faceting by row
 #' @param facet_columns columns for faceting by column
 #' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
-#' @param facet_switch either NULL, "both", "x", or "y", same as switch argument in facet calls
-#' @param facet_scales either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
-#' @param nrow number of rows in plot, only applies if facet_type == "wrap"
+#' @param ... params to either facet_wrap or facet_grid
 #'
 #' @import ggplot2
 #'
@@ -22,6 +20,7 @@
 #' @export
 #'
 #' @examples
+#' library(ggexp)
 #' library(dplyr)
 #'
 #' data = mtcars %>%
@@ -48,11 +47,7 @@ plot_barplot = function(data,
                         facet_rows = c(),
                         facet_columns = c(),
                         facet_type = "grid",
-                        facet_switch = NULL,
-                        facet_scales = "free",
-                        nrow = 1) {
-
-  data[, x] = factor(data[, x, drop = TRUE], levels = gtools::mixedsort(unique(data[, x, drop = TRUE])))
+                        ...) {
 
   if (!is.null(label)) {
     if (is.numeric(data[, label, drop = TRUE])) {
@@ -82,9 +77,7 @@ plot_barplot = function(data,
                      facet_rows,
                      facet_columns,
                      facet_type,
-                     facet_scales,
-                     facet_switch,
-                     nrow)
+                     ...)
 
   return(plot)
 }

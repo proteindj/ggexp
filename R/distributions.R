@@ -16,9 +16,7 @@
 #' @param facet_rows columns for faceting by row
 #' @param facet_columns columns for faceting by column
 #' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
-#' @param facet_switch either NULL, "both", "x", or "y", same as switch argument in facet calls
-#' @param facet_scales either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls
-#' @param nrow number of rows in plot, only applies if facet_type == "wrap"
+#' @param ... params passed into either facet_wrap or facet_grid, depending on facet_type parameter
 #'
 #' @import ggplot2
 #'
@@ -26,7 +24,7 @@
 #' @export
 #'
 #' @examples
-#'
+#' NULL
 plot_distributions = function(data,
                               pairwise_annotation = NULL,
                               type = "quasirandom",
@@ -46,14 +44,14 @@ plot_distributions = function(data,
                               facet_scales = "free",
                               facet_switch = NULL,
                               nrow = 1) {
-  plot = get(paste0("plot_", type))(data,
-                                    x,
-                                    y,
-                                    color,
-                                    group,
-                                    alpha)
+  plot = get(paste0(".plot_", type))(data,
+                                     x,
+                                     y,
+                                     color,
+                                     group,
+                                     alpha)
 
-  plot = plot_scale(plot, scale, type)
+  plot = .plot_scale(plot, scale, type)
 
   plot = plot_facets(plot,
                      facet_rows,
@@ -64,11 +62,12 @@ plot_distributions = function(data,
                      nrow)
 
   if (annotate_counts) {
-    counts_annotation = compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
-    plot = plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
+    counts_annotation = .compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
+    plot = .plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
   }
 
-  if (!is.null(pairwise_annotation) & (pairwise_annotation_label %in% colnames(pairwise_annotation)) &
+  if (!is.null(pairwise_annotation) &
+      (pairwise_annotation_label %in% colnames(pairwise_annotation)) &
       !(type %in% c("density", "ridge"))) {
     plot = plot_pairwise_annotation(
       plot,
@@ -85,6 +84,28 @@ plot_distributions = function(data,
   return(plot)
 }
 
+#' Compute number of values per group for count annotation
+#'
+#' @param data Data frame from which to count observations
+#' @param x Column for x-axis
+#' @param groups Groups to facet by
+#'
+#' @importFrom stats na.omit
+#' @importFrom dplyr group_by tally
+#'
+#' @return
+#'
+#' @examples
+#' NULL
+.compute_counts_annotation_data = function(data, x, groups) {
+  counts = data[, unique(c(x, groups)), drop = FALSE] %>%
+    na.omit()
+  counts = counts %>%
+    group_by(.dots = unique(c(x, groups))) %>%
+    tally()
+  return(counts)
+}
+
 #' Annotate number of values per group on plot
 #'
 #' @param plot Plot with discrete x-axis to annotate counts on
@@ -99,11 +120,11 @@ plot_distributions = function(data,
 #'
 #' @examples
 #' NULL
-plot_counts_annotation = function(plot,
-                                  x,
-                                  counts_annotation,
-                                  annotate_counts,
-                                  type) {
+.plot_counts_annotation = function(plot,
+                                   x,
+                                   counts_annotation,
+                                   annotate_counts,
+                                   type) {
   if (annotate_counts &&
       !(type %in% c("density", "ridge"))) {
     plot = plot +
@@ -137,28 +158,6 @@ plot_counts_annotation = function(plot,
   return(plot)
 }
 
-#' Compute number of values per group for count annotation
-#'
-#' @param data Data frame from which to count observations
-#' @param x Column for x-axis
-#' @param groups Groups to facet by
-#'
-#' @importFrom stats na.omit
-#' @importFrom dplyr group_by tally
-#'
-#' @return
-#'
-#' @examples
-#' NULL
-compute_counts_annotation_data = function(data, x, groups) {
-  counts = data[, unique(c(x, groups)), drop = FALSE] %>%
-    na.omit()
-  counts = counts %>%
-    group_by(.dots = unique(c(x, groups))) %>%
-    tally()
-  return(counts)
-}
-
 #' Transform scale based on scale type and plot type
 #'
 #' @param plot ggplot object
@@ -171,7 +170,7 @@ compute_counts_annotation_data = function(data, x, groups) {
 #'
 #' @examples
 #' NULL
-plot_scale = function(plot, scale, type) {
+.plot_scale = function(plot, scale, type) {
   if (scale == "log") {
     plot = plot +
       scale_y_continuous(trans = 'log10')
@@ -197,15 +196,20 @@ plot_scale = function(plot, scale, type) {
 #'
 #' @examples
 #' NULL
-plot_line = function(data,
-                     x = NULL,
-                     y = NULL,
-                     color = NULL,
-                     group = NULL,
-                     alpha = 0.5) {
+.plot_line = function(data,
+                      x = NULL,
+                      y = NULL,
+                      color = NULL,
+                      group = NULL,
+                      alpha = 0.5) {
   plot = ggplot(data) +
     geom_line(alpha = alpha,
-              aes_string(x = x, y = y, group = group, color = color)) +
+              aes_string(
+                x = x,
+                y = y,
+                group = group,
+                color = color
+              )) +
     geom_point(alpha = alpha,
                aes_string(x = x, y = y, col = color),
                shape = 1)
@@ -228,12 +232,12 @@ plot_line = function(data,
 #'
 #' @examples
 #' NULL
-plot_sina = function(data,
-                     x = NULL,
-                     y = NULL,
-                     color = NULL,
-                     group = NULL,
-                     alpha = 0.5) {
+.plot_sina = function(data,
+                      x = NULL,
+                      y = NULL,
+                      color = NULL,
+                      group = NULL,
+                      alpha = 0.5) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
@@ -241,8 +245,8 @@ plot_sina = function(data,
     group = group
   )) +
     geom_sina(alpha = alpha,
-                       shape = 1,
-                       position = position_dodge(width = 0)) +
+              shape = 1,
+              position = position_dodge(width = 0)) +
     geom_boxplot(
       alpha = 0,
       width = 0.3,
@@ -269,12 +273,12 @@ plot_sina = function(data,
 #'
 #' @examples
 #' NULL
-plot_quasirandom = function(data,
-                            x = NULL,
-                            y = NULL,
-                            color = NULL,
-                            group = NULL,
-                            alpha = 0.5) {
+.plot_quasirandom = function(data,
+                             x = NULL,
+                             y = NULL,
+                             color = NULL,
+                             group = NULL,
+                             alpha = 0.5) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
@@ -311,12 +315,12 @@ plot_quasirandom = function(data,
 #'
 #' @examples
 #' NULL
-plot_violin = function(data,
-                       x = NULL,
-                       y = NULL,
-                       color = NULL,
-                       group = NULL,
-                       alpha = 0.5) {
+.plot_violin = function(data,
+                        x = NULL,
+                        y = NULL,
+                        color = NULL,
+                        group = NULL,
+                        alpha = 0.5) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
@@ -348,12 +352,12 @@ plot_violin = function(data,
 #'
 #' @examples
 #' NULL
-plot_box = function(data,
-                    x = NULL,
-                    y = NULL,
-                    color = NULL,
-                    group = NULL,
-                    alpha = 0.5) {
+.plot_box = function(data,
+                     x = NULL,
+                     y = NULL,
+                     color = NULL,
+                     group = NULL,
+                     alpha = 0.5) {
   plot = ggplot(data) +
     geom_boxplot(alpha = 1,
                  width = 0.3,
@@ -382,17 +386,22 @@ plot_box = function(data,
 #'
 #' @examples
 #' NULL
-plot_density = function(data,
-                        x = NULL,
-                        y = NULL,
-                        color = NULL,
-                        group = NULL,
-                        alpha = 0.5) {
+.plot_density = function(data,
+                         x = NULL,
+                         y = NULL,
+                         color = NULL,
+                         group = NULL,
+                         alpha = 0.5) {
   if (!is.null(group) && !is.null(color)) {
     data[, group] = interaction(data[, color, drop = TRUE], data[, group, drop = TRUE])
   }
   if (!is.numeric(data[, color, drop = TRUE])) {
-    plot = ggplot(data, aes_string(x = y, col = color, fill = color, group = group)) +
+    plot = ggplot(data, aes_string(
+      x = y,
+      col = color,
+      fill = color,
+      group = group
+    )) +
       geom_density(alpha = alpha) +
       geom_rug(alpha = 0.5)
   } else {
@@ -419,12 +428,12 @@ plot_density = function(data,
 #'
 #' @examples
 #' NULL
-plot_ridge = function(data,
-                      x = NULL,
-                      y = NULL,
-                      color = NULL,
-                      group = NULL,
-                      alpha = 0.5) {
+.plot_ridge = function(data,
+                       x = NULL,
+                       y = NULL,
+                       color = NULL,
+                       group = NULL,
+                       alpha = 0.5) {
   plot = ggplot(data, aes_string(
     x = y,
     y = x,

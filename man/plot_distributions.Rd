@@ -59,11 +59,7 @@ plot_distributions(
 
 \item{facet_type}{either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively}
 
-\item{facet_scales}{either "fixed", "free_x", "free_y", or "free", same as scales argument in facet calls}
-
-\item{facet_switch}{either NULL, "both", "x", or "y", same as switch argument in facet calls}
-
-\item{nrow}{number of rows in plot, only applies if facet_type == "wrap"}
+\item{...}{params passed into either facet_wrap or facet_grid, depending on facet_type parameter}
 }
 \value{
 ggplot object
@@ -72,5 +68,5 @@ ggplot object
 Plot distributions with pairwise annotations and flexibility
 }
 \examples{
-
+NULL
 }

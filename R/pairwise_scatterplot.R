@@ -9,9 +9,7 @@
 #' @param facet_rows Columns to facet on
 #' @param facet_columns Columns to facet on
 #' @param facet_type Either "wrap" or "grid", same as ggplot
-#' @param facet_scales Either NULL, "fixed", "free", "free_x", "free_y", same as ggplot
-#' @param facet_switch Either NULL, "x", "y", "both", same as ggplot
-#' @param nrow Number of rows if facet_type is "wrap"
+#' @param ... params passed into either facet_wrap or facet_grid, depending on facet_type parameter
 #'
 #' @import ggplot2
 #' @importFrom dplyr select_if left_join
@@ -34,9 +32,7 @@ plot_pairwise_scatterplot = function(data,
                                      facet_rows = c(),
                                      facet_columns = c(),
                                      facet_type = "grid",
-                                     facet_scales = "free",
-                                     facet_switch = "both",
-                                     nrow = 2) {
+                                     ...) {
   axes_columns = intersect(c(x, y), colnames(data))
 
   combinations = expand_grid_unique(x, y)
@@ -107,9 +103,7 @@ plot_pairwise_scatterplot = function(data,
                      facet_rows,
                      facet_columns,
                      facet_type,
-                     facet_scales,
-                     facet_switch,
-                     nrow)
+                     ...)
 
   return(plot)
 }
