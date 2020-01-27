@@ -40,10 +40,8 @@ plot_distributions = function(data,
                               pairwise_annotation_exclude = c(),
                               facet_rows = c(),
                               facet_columns = c(),
-                              facet_type = "wrap",
-                              facet_scales = "free",
-                              facet_switch = NULL,
-                              nrow = 1) {
+                              facet_type = "grid",
+                              ...) {
   plot = get(paste0(".plot_", type))(data,
                                      x,
                                      y,
@@ -57,9 +55,7 @@ plot_distributions = function(data,
                      facet_rows,
                      facet_columns,
                      facet_type,
-                     facet_scales,
-                     facet_switch,
-                     nrow)
+                     ...)
 
   if (annotate_counts) {
     counts_annotation = .compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
