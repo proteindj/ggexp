@@ -115,6 +115,7 @@ plot_distributions(
   pairwise_annotation_label = "p.adj.signif",
   pairwise_annotation_exclude = "ns",
   facet_columns = "feature",
+  facet_type = "wrap",
   tier_width = 0.08,
   type = "sina"
 )
