@@ -115,7 +115,7 @@ plot_pairwise_annotation = function(plot,
   combined$processed_annotation = processed_annotation
 
   combined = combined[, c(groups, "processed_annotation"), drop = FALSE]
-  combined = unnest(combined)
+  combined = unnest(combined, cols = "processed_annotation")
 
   return(combined)
 }

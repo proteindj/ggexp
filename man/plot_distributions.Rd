@@ -12,6 +12,7 @@ plot_distributions(
   y,
   group = NULL,
   color = NULL,
+  fill = NULL,
   alpha = 0.5,
   scale = "default",
   tier_width = 0.16,

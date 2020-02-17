@@ -9,6 +9,7 @@
   x = NULL,
   y = NULL,
   color = NULL,
+  fill = NULL,
   group = NULL,
   alpha = 0.5
 )

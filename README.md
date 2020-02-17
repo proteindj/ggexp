@@ -117,7 +117,8 @@ plot_distributions(
   facet_columns = "feature",
   facet_type = "wrap",
   tier_width = 0.08,
-  type = "sina"
+  type = "sina",
+  scales = "free"
 )
 ```
 
@@ -172,6 +173,7 @@ ridge = plot_distributions(
   x = "group",
   y = "value",
   color = "group",
+  fill = "group",
   facet_columns = "feature",
   type = "ridge"
 ) + labs(title = "ridge")

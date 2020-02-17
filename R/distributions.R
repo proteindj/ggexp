@@ -32,6 +32,7 @@ plot_distributions = function(data,
                               y,
                               group = NULL,
                               color = NULL,
+                              fill = NULL,
                               alpha = 0.5,
                               scale = "default",
                               tier_width = 0.16,
@@ -46,6 +47,7 @@ plot_distributions = function(data,
                                      x,
                                      y,
                                      color,
+                                     fill,
                                      group,
                                      alpha)
 
@@ -196,6 +198,7 @@ plot_distributions = function(data,
                       x = NULL,
                       y = NULL,
                       color = NULL,
+                      fill = NULL,
                       group = NULL,
                       alpha = 0.5) {
   plot = ggplot(data) +
@@ -232,6 +235,7 @@ plot_distributions = function(data,
                       x = NULL,
                       y = NULL,
                       color = NULL,
+                      fill = NULL,
                       group = NULL,
                       alpha = 0.5) {
   plot = ggplot(data, aes_string(
@@ -273,6 +277,7 @@ plot_distributions = function(data,
                              x = NULL,
                              y = NULL,
                              color = NULL,
+                             fill = NULL,
                              group = NULL,
                              alpha = 0.5) {
   plot = ggplot(data, aes_string(
@@ -315,6 +320,7 @@ plot_distributions = function(data,
                         x = NULL,
                         y = NULL,
                         color = NULL,
+                        fill = NULL,
                         group = NULL,
                         alpha = 0.5) {
   plot = ggplot(data, aes_string(
@@ -352,6 +358,7 @@ plot_distributions = function(data,
                      x = NULL,
                      y = NULL,
                      color = NULL,
+                     fill = NULL,
                      group = NULL,
                      alpha = 0.5) {
   plot = ggplot(data) +
@@ -386,25 +393,17 @@ plot_distributions = function(data,
                          x = NULL,
                          y = NULL,
                          color = NULL,
+                         fill = NULL,
                          group = NULL,
                          alpha = 0.5) {
-  if (!is.null(group) && !is.null(color)) {
-    data[, group] = interaction(data[, color, drop = TRUE], data[, group, drop = TRUE])
-  }
-  if (!is.numeric(data[, color, drop = TRUE])) {
-    plot = ggplot(data, aes_string(
-      x = y,
-      col = color,
-      fill = color,
-      group = group
-    )) +
-      geom_density(alpha = alpha) +
-      geom_rug(alpha = 0.5)
-  } else {
-    plot = ggplot(data, aes_string(x = y, group = group)) +
-      geom_density(alpha = alpha) +
-      geom_rug(aes_string(col = color, fill = color), alpha = 0.5)
-  }
+  plot = ggplot(data, aes_string(
+    x = y,
+    col = color,
+    fill = fill,
+    group = group
+  )) +
+    geom_density(alpha = alpha) +
+    geom_rug(alpha = 0.5)
   return(plot)
 }
 
@@ -428,13 +427,14 @@ plot_distributions = function(data,
                        x = NULL,
                        y = NULL,
                        color = NULL,
+                       fill = NULL,
                        group = NULL,
                        alpha = 0.5) {
   plot = ggplot(data, aes_string(
     x = y,
     y = x,
-    col = x,
-    fill = x
+    col = color,
+    fill = fill
   )) +
     geom_density_ridges(alpha = alpha) +
     geom_rug(alpha = 0.5, aes_string(color = color))
