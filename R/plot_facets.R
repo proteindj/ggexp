@@ -16,7 +16,6 @@ plot_facets = function(plot,
                        facet_columns = c(),
                        facet_type = "grid",
                        ...) {
-
   plot = get(paste0(".plot_facet_", facet_type))(plot, facet_rows, facet_columns, ...)
 
   return(plot)
@@ -38,7 +37,6 @@ plot_facets = function(plot,
                             facet_rows,
                             facet_columns,
                             ...) {
-
   formula = as.formula(paste0(
     ifelse(
       paste(facet_rows, collapse = " + ") == "",
@@ -74,7 +72,6 @@ plot_facets = function(plot,
                             facet_rows,
                             facet_columns,
                             ...) {
-
   plot = plot + facet_wrap(facets = c(facet_rows, facet_columns), ...)
 
   return(plot)

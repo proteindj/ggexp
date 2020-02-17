@@ -48,7 +48,6 @@ plot_barplot = function(data,
                         facet_columns = c(),
                         facet_type = "grid",
                         ...) {
-
   if (!is.null(label)) {
     if (is.numeric(data[, label, drop = TRUE])) {
       data[, label] = round(data[, label, drop = TRUE], 2)
@@ -67,9 +66,19 @@ plot_barplot = function(data,
 
   if (!is.null(label)) {
     if (stacked) {
-      plot = plot + geom_text(aes_string(label = label), position = get(paste0("position_", stack_or_fill))(vjust = 0.5), show.legend = FALSE, size = text_size)
+      plot = plot + geom_text(
+        aes_string(label = label),
+        position = get(paste0("position_", stack_or_fill))(vjust = 0.5),
+        show.legend = FALSE,
+        size = text_size
+      )
     } else {
-      plot = plot + geom_text(aes_string(label = label), position = position_dodge(width = 0.9), show.legend = FALSE, size = text_size)
+      plot = plot + geom_text(
+        aes_string(label = label),
+        position = position_dodge(width = 0.9),
+        show.legend = FALSE,
+        size = text_size
+      )
     }
   }
 

@@ -59,14 +59,12 @@ plot_heatmap = function(matrix,
                                 text_size,
                                 palette)
 
-  heatmap_color = colorRamp2(
-    c(
-      quantile(matrix, lower_quantile, na.rm = TRUE),
-      quantile(matrix, 0.5, na.rm = TRUE),
-      quantile(matrix, upper_quantile, na.rm = TRUE)
-    ),
-    c("royalblue4", "white", "firebrick4")
-  )
+  heatmap_color = colorRamp2(c(
+    quantile(matrix, lower_quantile, na.rm = TRUE),
+    quantile(matrix, 0.5, na.rm = TRUE),
+    quantile(matrix, upper_quantile, na.rm = TRUE)
+  ),
+  c("royalblue4", "white", "firebrick4"))
 
   heatmap = Heatmap(
     matrix,
