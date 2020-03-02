@@ -25,7 +25,8 @@ plot_heatmap(
   text_size = 10,
   row_names_size = 4,
   column_names_size = 4,
-  value_name = "value"
+  value_name = "value",
+  title = character(0)
 )
 }
 \arguments{
@@ -68,6 +69,10 @@ plot_heatmap(
 \item{row_names_size}{text size for row names}
 
 \item{column_names_size}{text size for column names}
+
+\item{value_name}{name of value, written above color bar}
+
+\item{title}{title of plot}
 }
 \value{
 

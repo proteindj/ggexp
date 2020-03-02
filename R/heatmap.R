@@ -20,6 +20,8 @@
 #' @param text_size text size
 #' @param row_names_size text size for row names
 #' @param column_names_size text size for column names
+#' @param value_name name of value, written above color bar
+#' @param title title of plot
 #'
 #' @importFrom ComplexHeatmap Heatmap draw
 #' @importFrom circlize colorRamp2
@@ -50,7 +52,9 @@ plot_heatmap = function(matrix,
                         text_size = 10,
                         row_names_size = 4,
                         column_names_size = 4,
-                        value_name = "value") {
+                        value_name = "value",
+                        title = character(0)) {
+
   row_anno = .create_annotation(row_annotations, "row", show_legend_row, text_size, palette)
 
   col_anno = .create_annotation(column_annotations,
@@ -85,6 +89,7 @@ plot_heatmap = function(matrix,
     row_names_gp = gpar(fontsize = row_names_size),
     row_title_gp = gpar(fontsize = text_size),
     column_title_gp = gpar(fontsize = text_size),
+    column_title = title,
     row_dend_gp = gpar(lwd = 0.25),
     column_dend_gp = gpar(lwd = 0.25),
     heatmap_legend_param = list(

@@ -21,6 +21,39 @@ plot_facets = function(plot,
   return(plot)
 }
 
+#' Get dimensions of ggplot plots with facets
+#'
+#' @param plot ggplot object with facets
+#'
+#' @importFrom ggplot2 wrap_dims ggplot_build
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' NULL
+compute_facet_dim = function(p) {
+
+  if (is.null(p$facet$params$rows)) {
+    built = ggplot_build(p)
+    n = length(unique(built$data[[1]]$PANEL))
+    par = built$layout$facet$params
+    dim = wrap_dims(n, par$nrow, par$ncol)
+  } else {
+    nrow = 1
+    for (row in names(p$facet$params$rows)) {
+      nrow = nrow * length(unique(p$data[, row, drop = TRUE]))
+    }
+    ncol = 1
+    for (col in names(p$facet$params$cols)) {
+      ncol = ncol * length(unique(p$data[, col, drop = TRUE]))
+    }
+    dim = c(nrow, ncol)
+  }
+
+  return(dim)
+}
+
 #' Helper function to add facet_grid to plot
 #'
 #' @param plot ggplot object to facet

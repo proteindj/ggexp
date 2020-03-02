@@ -4,18 +4,25 @@
 \alias{.plot_counts_annotation}
 \title{Annotate number of values per group on plot}
 \usage{
-.plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
+.plot_counts_annotation(
+  plot,
+  x,
+  counts_annotation,
+  annotate_counts,
+  type,
+  text_size
+)
 }
 \arguments{
-\item{plot}{Plot with discrete x-axis to annotate counts on}
+\item{plot}{plot with discrete x-axis to annotate counts on}
 
-\item{x}{Column for x-axis}
+\item{x}{column for x-axis}
 
-\item{counts_annotation}{Annotation returned from compute_counts_annotation_data}
+\item{counts_annotation}{annotation returned from compute_counts_annotation_data}
 
-\item{annotate_counts}{Boolean whether to annotate counts or not}
+\item{annotate_counts}{whether to annotate counts or not}
 
-\item{type}{Type of plot, same as plot_distributions type}
+\item{type}{type of plot, same as plot_distributions type}
 }
 \value{
 

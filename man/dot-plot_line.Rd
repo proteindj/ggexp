@@ -15,17 +15,19 @@
 )
 }
 \arguments{
-\item{data}{Data frame for plotting}
+\item{data}{data frame for plotting}
 
-\item{x}{Column for x-axis}
+\item{x}{column for x-axis}
 
-\item{y}{Column for y-axis}
+\item{y}{column for y-axis}
 
-\item{color}{Column to color points by}
+\item{color}{column to color points by}
 
-\item{group}{Column to group points by - line connects by this variable}
+\item{fill}{column to fill points by}
 
-\item{alpha}{Alpha for each point}
+\item{group}{column to group points by - line connects by this variable}
+
+\item{alpha}{alpha for each point}
 }
 \value{
 

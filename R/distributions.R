@@ -34,6 +34,7 @@ plot_distributions = function(data,
                               color = NULL,
                               fill = NULL,
                               alpha = 0.5,
+                              text_size = 2,
                               scale = "default",
                               tier_width = 0.16,
                               annotate_counts = TRUE,
@@ -43,6 +44,7 @@ plot_distributions = function(data,
                               facet_columns = c(),
                               facet_type = "grid",
                               ...) {
+
   plot = get(paste0(".plot_", type))(data,
                                      x,
                                      y,
@@ -61,7 +63,7 @@ plot_distributions = function(data,
 
   if (annotate_counts) {
     counts_annotation = .compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
-    plot = .plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type)
+    plot = .plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type, text_size)
   }
 
   if (!is.null(pairwise_annotation) &
@@ -84,9 +86,9 @@ plot_distributions = function(data,
 
 #' Compute number of values per group for count annotation
 #'
-#' @param data Data frame from which to count observations
-#' @param x Column for x-axis
-#' @param groups Groups to facet by
+#' @param data data frame from which to count observations
+#' @param x column for x-axis
+#' @param groups groups to facet by
 #'
 #' @importFrom stats na.omit
 #' @importFrom dplyr group_by tally
@@ -106,11 +108,11 @@ plot_distributions = function(data,
 
 #' Annotate number of values per group on plot
 #'
-#' @param plot Plot with discrete x-axis to annotate counts on
-#' @param x Column for x-axis
-#' @param counts_annotation Annotation returned from compute_counts_annotation_data
-#' @param annotate_counts Boolean whether to annotate counts or not
-#' @param type Type of plot, same as plot_distributions type
+#' @param plot plot with discrete x-axis to annotate counts on
+#' @param x column for x-axis
+#' @param counts_annotation annotation returned from compute_counts_annotation_data
+#' @param annotate_counts whether to annotate counts or not
+#' @param type type of plot, same as plot_distributions type
 #'
 #' @import ggplot2
 #'
@@ -122,7 +124,8 @@ plot_distributions = function(data,
                                    x,
                                    counts_annotation,
                                    annotate_counts,
-                                   type) {
+                                   type,
+                                   text_size) {
   if (annotate_counts &&
       !(type %in% c("density", "ridge"))) {
     plot = plot +
@@ -135,7 +138,7 @@ plot_distributions = function(data,
         ),
         hjust = 0.5,
         vjust = -0.5,
-        size = 2,
+        size = text_size,
         color = "black",
         angle = 0
       )
@@ -159,8 +162,8 @@ plot_distributions = function(data,
 #' Transform scale based on scale type and plot type
 #'
 #' @param plot ggplot object
-#' @param scale Either "log" or "default"
-#' @param type Plot type, same as plot_distributions type
+#' @param scale either "log" or "default"
+#' @param type plot type, same as plot_distributions type
 #'
 #' @import ggplot2
 #'
@@ -181,12 +184,13 @@ plot_distributions = function(data,
 
 #' Plot line graph
 #'
-#' @param data Data frame for plotting
-#' @param x Column for x-axis
-#' @param y Column for y-axis
-#' @param color Column to color points by
-#' @param group Column to group points by - line connects by this variable
-#' @param alpha Alpha for each point
+#' @param data data frame for plotting
+#' @param x column for x-axis
+#' @param y column for y-axis
+#' @param color column to color points by
+#' @param fill column to fill points by
+#' @param group column to group points by - line connects by this variable
+#' @param alpha alpha for each point
 #'
 #' @import ggplot2
 #'

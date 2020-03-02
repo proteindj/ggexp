@@ -7,11 +7,11 @@
 .compute_counts_annotation_data(data, x, groups)
 }
 \arguments{
-\item{data}{Data frame from which to count observations}
+\item{data}{data frame from which to count observations}
 
-\item{x}{Column for x-axis}
+\item{x}{column for x-axis}
 
-\item{groups}{Groups to facet by}
+\item{groups}{groups to facet by}
 }
 \value{
 

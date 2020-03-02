@@ -9,9 +9,9 @@
 \arguments{
 \item{plot}{ggplot object}
 
-\item{scale}{Either "log" or "default"}
+\item{scale}{either "log" or "default"}
 
-\item{type}{Plot type, same as plot_distributions type}
+\item{type}{plot type, same as plot_distributions type}
 }
 \value{
 
