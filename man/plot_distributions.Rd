@@ -20,6 +20,9 @@ plot_distributions(
   annotate_counts = TRUE,
   pairwise_annotation_label = "p_signif",
   pairwise_annotation_exclude = c(),
+  lower_quantile = 0,
+  upper_quantile = 1,
+  drop_outliers = FALSE,
   facet_rows = c(),
   facet_columns = c(),
   facet_type = "grid",
@@ -52,6 +55,10 @@ plot_distributions(
 \item{pairwise_annotation_label}{column of pairwise_annotation data to use for annotation text}
 
 \item{pairwise_annotation_exclude}{values to not annotate on pairwise annotations}
+
+\item{lower_quantile}{lower quantile beyond which to limit axis}
+
+\item{upper_quantile}{upper quantile beyond which to limit axis}
 
 \item{facet_rows}{columns for faceting by row}
 

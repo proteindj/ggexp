@@ -13,6 +13,8 @@
 #' @param annotate_counts boolean whether to annotate counts per group or not
 #' @param pairwise_annotation_label column of pairwise_annotation data to use for annotation text
 #' @param pairwise_annotation_exclude values to not annotate on pairwise annotations
+#' @param lower_quantile lower quantile beyond which to limit axis
+#' @param upper_quantile upper quantile beyond which to limit axis
 #' @param facet_rows columns for faceting by row
 #' @param facet_columns columns for faceting by column
 #' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
@@ -40,10 +42,15 @@ plot_distributions = function(data,
                               annotate_counts = TRUE,
                               pairwise_annotation_label = "p_signif",
                               pairwise_annotation_exclude = c(),
+                              lower_quantile = 0,
+                              upper_quantile = 1,
+                              drop_outliers = FALSE,
                               facet_rows = c(),
                               facet_columns = c(),
                               facet_type = "grid",
                               ...) {
+
+  data =.fix_outliers(data, lower_quantile, upper_quantile, drop_outliers, c(facet_rows, facet_columns))
 
   plot = get(paste0(".plot_", type))(data,
                                      x,
@@ -83,6 +90,43 @@ plot_distributions = function(data,
 
   return(plot)
 }
+
+#' Remove or mask outliers based on quantiles in each group
+#'
+#' @param data data frame containing dataset to use for plotting
+#' @param lower_quantile lower quantile beyond which to limit axis
+#' @param upper_quantile upper quantile beyond which to limit axis
+#' @param drop_outliers whether to drop outliers or not - if FALSE, then outliers are masked to the lower or upper quantile values
+#' @param groups columns which to group on in computing outliers
+#'
+#' @importFrom dplyr group_by mutate filter
+#'
+#' @return
+#'
+#' @examples
+#' NULL
+.fix_outliers = function(data, lower_quantile, upper_quantile, drop_outliers, groups) {
+
+  data = data %>%
+    group_by(.dots = groups) %>%
+    mutate(upper_quantile = quantile(value, upper_quantile),
+           lower_quantile = quantile(value, lower_quantile)) %>%
+    mutate(upper_outlier = value > upper_quantile,
+           lower_outlier = value < lower_quantile) %>%
+    mutate(outlier = lower_outlier | upper_outlier)
+
+  if (drop_outliers) {
+    data = data %>%
+      filter(!outlier)
+  } else {
+    data = data %>%
+      mutate(value = ifelse(lower_outlier, lower_quantile, value)) %>%
+      mutate(value = ifelse(upper_outlier, upper_quantile, value))
+  }
+
+  return(data)
+}
+
 
 #' Compute number of values per group for count annotation
 #'

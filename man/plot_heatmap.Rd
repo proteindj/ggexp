@@ -26,7 +26,11 @@ plot_heatmap(
   row_names_size = 4,
   column_names_size = 4,
   value_name = "value",
-  title = character(0)
+  title = character(0),
+  colors = c("royalblue4", "white", "firebrick4"),
+  color_break_functions = list(function(matrix) quantile(matrix, lower_quantile, na.rm =
+    TRUE), function(matrix) quantile(matrix, 0.5, na.rm = TRUE), function(matrix)
+    quantile(matrix, upper_quantile, na.rm = TRUE))
 )
 }
 \arguments{

@@ -53,9 +53,23 @@ plot_heatmap = function(matrix,
                         row_names_size = 4,
                         column_names_size = 4,
                         value_name = "value",
-                        title = character(0)) {
+                        title = character(0),
+                        colors = c("royalblue4", "white", "firebrick4"),
+                        color_break_functions = list(
+                          function(matrix)
+                          quantile(matrix, lower_quantile, na.rm = TRUE),
+                          function(matrix)
+                            quantile(matrix, 0.5, na.rm = TRUE),
+                          function(matrix)
+                            quantile(matrix, upper_quantile, na.rm = TRUE)
+                          )
+                        ) {
 
-  row_anno = .create_annotation(row_annotations, "row", show_legend_row, text_size, palette)
+  row_anno = .create_annotation(row_annotations,
+                                "row",
+                                show_legend_row,
+                                text_size,
+                                palette)
 
   col_anno = .create_annotation(column_annotations,
                                 "column",
@@ -63,12 +77,7 @@ plot_heatmap = function(matrix,
                                 text_size,
                                 palette)
 
-  heatmap_color = colorRamp2(c(
-    quantile(matrix, lower_quantile, na.rm = TRUE),
-    quantile(matrix, 0.5, na.rm = TRUE),
-    quantile(matrix, upper_quantile, na.rm = TRUE)
-  ),
-  c("royalblue4", "white", "firebrick4"))
+  heatmap_color = colorRamp2(sapply(color_break_functions, function(fn) fn(matrix)), colors)
 
   heatmap = Heatmap(
     matrix,
