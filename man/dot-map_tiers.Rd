@@ -23,6 +23,3 @@
 \description{
 Map tiers to y positions based on the data
 }
-\examples{
-NULL
-}

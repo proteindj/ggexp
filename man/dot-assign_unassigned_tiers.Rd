@@ -15,6 +15,3 @@
 \description{
 Assigned tiers that have not been assigned yet
 }
-\examples{
-NULL
-}

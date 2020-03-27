@@ -84,6 +84,3 @@ plot_heatmap(
 \description{
 Plot heatmap using ComplexHeatmap using simplified interface
 }
-\examples{
-NULL
-}

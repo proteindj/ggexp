@@ -19,6 +19,3 @@
 \description{
 Helper function to add facet_wrap to plot
 }
-\examples{
-NULL
-}

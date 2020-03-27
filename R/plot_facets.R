@@ -8,9 +8,6 @@
 #'
 #' @return ggplot object
 #' @export
-#'
-#' @examples
-#' NULL
 plot_facets = function(plot,
                        facet_rows = c(),
                        facet_columns = c(),
@@ -29,9 +26,6 @@ plot_facets = function(plot,
 #'
 #' @return
 #' @export
-#'
-#' @examples
-#' NULL
 compute_facet_dim = function(p) {
 
   if (is.null(p$facet$params$rows)) {
@@ -63,9 +57,6 @@ compute_facet_dim = function(p) {
 #' @importFrom ggplot2 facet_grid
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .plot_facet_grid = function(plot,
                             facet_rows,
                             facet_columns,
@@ -98,9 +89,6 @@ compute_facet_dim = function(p) {
 #' @importFrom ggplot2 facet_wrap
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .plot_facet_wrap = function(plot,
                             facet_rows,
                             facet_columns,

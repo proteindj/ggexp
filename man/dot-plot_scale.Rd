@@ -19,6 +19,4 @@
 \description{
 Transform scale based on scale type and plot type
 }
-\examples{
-NULL
-}
+\keyword{internal}

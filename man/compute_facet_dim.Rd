@@ -15,6 +15,3 @@ compute_facet_dim(p)
 \description{
 Get dimensions of ggplot plots with facets
 }
-\examples{
-NULL
-}

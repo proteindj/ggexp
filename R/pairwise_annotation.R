@@ -8,9 +8,6 @@
 #'
 #' @return ggplot object
 #' @export
-#'
-#' @examples
-#' NULL
 plot_pairwise_annotation = function(plot,
                                     pairwise_annotation,
                                     label = "p_signif",
@@ -81,9 +78,6 @@ plot_pairwise_annotation = function(plot,
 #' @importFrom purrr map2
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .prepare_pairwise_annotation = function(data,
                                         pairwise_annotation,
                                         x,
@@ -132,9 +126,6 @@ plot_pairwise_annotation = function(plot,
 #' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .prepare_pairwise_annotation_single_group = function(data,
                                                      pairwise_annotation,
                                                      x,
@@ -160,9 +151,6 @@ plot_pairwise_annotation = function(plot,
 #' @importFrom dplyr mutate
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .add_group_numbers = function(pairwise_annotation, data, x) {
   groups = factor(data[, x, drop = TRUE])
 
@@ -184,9 +172,6 @@ plot_pairwise_annotation = function(plot,
 #' @importFrom dplyr arrange mutate
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .assign_tiers = function(pairwise_annotation) {
   if (nrow(pairwise_annotation) > 0) {
     pairwise_annotation = pairwise_annotation %>%
@@ -211,10 +196,6 @@ plot_pairwise_annotation = function(plot,
 #' @param pairwise_annotation data frame with pairwise annotation to be plotted, must have columns group1_num and group2_num
 #'
 #' @return
-#' @export
-#'
-#' @examples
-#' NULL
 .assign_unassigned_tiers = function(pairwise_annotation) {
   assigned = pairwise_annotation[c(1), , drop = FALSE]
   unassigned = pairwise_annotation[c(), , drop = FALSE]
@@ -242,9 +223,6 @@ plot_pairwise_annotation = function(plot,
 #' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .map_tiers = function(data,
                       pairwise_annotation,
                       y,
@@ -280,9 +258,6 @@ plot_pairwise_annotation = function(plot,
 #' @param tier_mapping result from .map_tiers
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .add_tier_mapping = function(pairwise_annotation, tier_mapping) {
   if (nrow(pairwise_annotation) > 0) {
     if (nrow(tier_mapping) > 1) {
@@ -301,9 +276,6 @@ plot_pairwise_annotation = function(plot,
 #' @param length.out desired vector length
 #'
 #' @return
-#'
-#' @examples
-#' NULL
 .seq_log = function(from, by, length.out) {
   ys = c(from)
   while (length(ys) < length.out) {

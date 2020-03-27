@@ -29,6 +29,3 @@ ggplot object
 \description{
 Utility function to facet a plot
 }
-\examples{
-NULL
-}

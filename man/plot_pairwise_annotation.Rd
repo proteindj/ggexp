@@ -26,6 +26,3 @@ ggplot object
 \description{
 Plot pairwise annotation
 }
-\examples{
-NULL
-}

@@ -4,15 +4,7 @@
 \alias{.plot_quasirandom}
 \title{Plot quasirandom plot}
 \usage{
-.plot_quasirandom(
-  data,
-  x = NULL,
-  y = NULL,
-  color = NULL,
-  fill = NULL,
-  group = NULL,
-  alpha = 0.5
-)
+.plot_quasirandom(data, x, y, color, fill, group, alpha, point_size)
 }
 \arguments{
 \item{data}{Data frame for plotting}

@@ -12,8 +12,8 @@ plot_pairwise_scatterplot(
   axis_annotations = NULL,
   color = NULL,
   shape = NULL,
-  size = NULL,
-  alpha = 0.3,
+  alpha = 1,
+  point_size = 0.5,
   facet_rows = c(),
   facet_columns = c(),
   facet_type = "grid",
@@ -46,7 +46,4 @@ ggplot object
 }
 \description{
 Plot pairwise scatterplots
-}
-\examples{
-NULL
 }

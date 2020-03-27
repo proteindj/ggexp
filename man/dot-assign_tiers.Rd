@@ -15,6 +15,3 @@
 \description{
 Assign tiers based on optimal plotting location to prevent one tier per comparison
 }
-\examples{
-NULL
-}

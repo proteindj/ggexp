@@ -17,9 +17,6 @@
 #'
 #' @return ggplot object
 #' @export
-#'
-#' @examples
-#' NULL
 plot_pairwise_scatterplot = function(data,
                                      x = colnames(data %>% select_if(is.numeric)),
                                      y = x,
@@ -27,8 +24,8 @@ plot_pairwise_scatterplot = function(data,
                                      axis_annotations = NULL,
                                      color = NULL,
                                      shape = NULL,
-                                     size = NULL,
-                                     alpha = 0.3,
+                                     alpha = 1,
+                                     point_size = 0.5,
                                      facet_rows = c(),
                                      facet_columns = c(),
                                      facet_type = "grid",
@@ -86,10 +83,10 @@ plot_pairwise_scatterplot = function(data,
   }
 
   plot = data %>%
-    ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color, size = size, shape = shape)) +
+    ggplot(., aes_string(x = ".xvalue", y = ".yvalue", color = color, shape = shape)) +
     theme_ggexp() +
     labs(x = xlab, y = ylab) +
-    geom_point(alpha = alpha)
+    geom_point(alpha = alpha, size = point_size)
 
   plot$data$.xykey = paste0("x: ", plot$data$.xkey, ", y: ", plot$data$.ykey)
 

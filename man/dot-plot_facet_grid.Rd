@@ -19,6 +19,3 @@
 \description{
 Helper function to add facet_grid to plot
 }
-\examples{
-NULL
-}

@@ -4,15 +4,7 @@
 \alias{.plot_density}
 \title{Plot density plot}
 \usage{
-.plot_density(
-  data,
-  x = NULL,
-  y = NULL,
-  color = NULL,
-  fill = NULL,
-  group = NULL,
-  alpha = 0.5
-)
+.plot_density(data, x, y, color, fill, group, alpha, point_size)
 }
 \arguments{
 \item{data}{Data frame for plotting}

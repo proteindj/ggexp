@@ -38,6 +38,3 @@
 \description{
 Prepare pairwise annotation data frame for plotting by assigning tiers and y positions for a single group
 }
-\examples{
-NULL
-}

@@ -19,6 +19,3 @@
 \description{
 Sequence generation with equal distance in log space
 }
-\examples{
-NULL
-}

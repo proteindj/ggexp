@@ -17,6 +17,3 @@
 \description{
 Add tier mapping to pairwise annotation data based on tier mapping
 }
-\examples{
-NULL
-}

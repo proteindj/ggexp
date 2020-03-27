@@ -4,7 +4,7 @@
 \alias{.fix_outliers}
 \title{Remove or mask outliers based on quantiles in each group}
 \usage{
-.fix_outliers(data, lower_quantile, upper_quantile, drop_outliers, groups)
+.fix_outliers(data, y, lower_quantile, upper_quantile, drop_outliers, groups)
 }
 \arguments{
 \item{data}{data frame containing dataset to use for plotting}
@@ -23,6 +23,4 @@
 \description{
 Remove or mask outliers based on quantiles in each group
 }
-\examples{
-NULL
-}
+\keyword{internal}

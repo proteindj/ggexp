@@ -47,7 +47,7 @@ plot_barplot(
 ggplot object
 }
 \description{
-This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
+This uses geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 }
 \examples{
 library(ggexp)

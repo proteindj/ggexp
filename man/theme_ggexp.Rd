@@ -12,6 +12,3 @@ ggplot theme
 \description{
 Get ggexp default theme
 }
-\examples{
-NULL
-}

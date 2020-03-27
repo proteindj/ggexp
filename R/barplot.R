@@ -1,6 +1,6 @@
 #' Plot (stacked) barplot with annotations
 #'
-#' This is a convenience function wrapping around geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
+#' This uses geom_bar, but it makes it easy to make both stacked and unstacked plots and adjust text annotations accordingly.
 #'
 #' @param data data frame containing dataset to use for plotting
 #' @param x column for x-axis

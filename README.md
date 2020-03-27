@@ -114,9 +114,9 @@ plot_distributions(
   color = "group",
   pairwise_annotation_label = "p.adj.signif",
   pairwise_annotation_exclude = "ns",
+  pairwise_annotation_tier_width = 0.08,
   facet_columns = "feature",
   facet_type = "wrap",
-  tier_width = 0.08,
   type = "sina",
   scales = "free"
 )
@@ -157,6 +157,7 @@ violin = plot_distributions(
   x = "group",
   y = "value",
   color = "group",
+  fill = "group", 
   facet_columns = "feature",
   type = "violin"
 ) + labs(title = "violin")
@@ -173,7 +174,7 @@ ridge = plot_distributions(
   x = "group",
   y = "value",
   color = "group",
-  fill = "group",
+  fill = "group", 
   facet_columns = "feature",
   type = "ridge"
 ) + labs(title = "ridge")
@@ -190,26 +191,16 @@ the variable pairs that we visualize to keep things concise.
 Additionally, we may want to facet on other features that give us
 example-level information.
 
-For example, let’s consider the following dataset.
+For example, let’s consider the iris dataset.
 
-``` r
-data = data.frame(
-  A_1 = rnorm(100),
-  A_2 = rnorm(100),
-  A_3 = rnorm(100),
-  B_1 = rnorm(100, 2, 1),
-  B_2 = rnorm(100, 2, 1),
-  disease = sample(c("diseased", "healthy"), 100, TRUE)
-)
-```
-
-We also have some information about the features. We will call these
-axis annotations.
+Lets say we have some information about the features and only want to
+plot pairwise annotations within groups defined by this. We will call
+these axis annotations.
 
 ``` r
 axis_annotations = data.frame(
-  axis = c("A_1", "A_2", "A_3", "B_1", "B_2"),
-  feature_group = c(rep("A", 3), rep("B", 2))
+  axis = c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"),
+  feature_group = c("Sepal", "Sepal", "Petal", "Petal")
 )
 ```
 
@@ -217,17 +208,16 @@ Based on the `feature_group` we want to restrict the pairwise
 scatterplots made.
 
 In the following plot, we make the pairwise scatterplots restricted on
-`feature_group` and faceted by the `disease` of the row.
+`feature_group` and facet on `Species`.
 
 ``` r
 plot_pairwise_scatterplot(
-  data = data,
+  data = iris,
   combination_groups = "feature_group",
   axis_annotations = axis_annotations,
-  facet_columns = "disease",
   facet_type = "wrap",
-  nrow = 2,
-  color = "feature_group"
+  facet_columns = "Species",
+  nrow = 1
 )
 ```
 

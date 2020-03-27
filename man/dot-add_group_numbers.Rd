@@ -15,6 +15,3 @@
 \description{
 Adds columns group1_num, group2_num, and rank
 }
-\examples{
-NULL
-}

@@ -29,9 +29,6 @@
 #'
 #' @return
 #' @export
-#'
-#' @examples
-#' NULL
 plot_heatmap = function(matrix,
                         row_annotations = NULL,
                         column_annotations = NULL,

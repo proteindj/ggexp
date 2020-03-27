@@ -4,9 +4,6 @@
 #'
 #' @return ggplot theme
 #' @export
-#'
-#' @examples
-#' NULL
 theme_ggexp = function() {
   theme_classic() +
     theme(strip.background = element_blank(), strip.placement = "outside")

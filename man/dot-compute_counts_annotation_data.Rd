@@ -19,6 +19,4 @@
 \description{
 Compute number of values per group for count annotation
 }
-\examples{
-NULL
-}
+\keyword{internal}

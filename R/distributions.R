@@ -1,20 +1,25 @@
 #' Plot distributions with pairwise annotations and flexibility
 #'
 #' @param data data frame containing dataset to use for plotting
-#' @param pairwise_annotation data frame containing pairwise annotations
-#' @param type type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"
 #' @param x column for x-axis
 #' @param y column for y-axis
+#' @param type type of plot - can be "line", "sina", "quasirandom", "density", "violin", "box", or "ridge"
+#' @param add_boxplot boolean to add boxplot on top of selected plot type
 #' @param group column for group aesthethic, used if type == "line"
 #' @param color column for color
+#' @param fill column for fill
 #' @param alpha alpha of points
+#' @param point_size size of points for plot types with individual points
+#' @param text_size text size for count annotations
 #' @param scale either "default" for linearly-spaced scale or "log" for log-spaced
-#' @param tier_width relative distance between tiers for pairwise annotations, between 0 and 1
 #' @param annotate_counts boolean whether to annotate counts per group or not
+#' @param pairwise_annotation data frame containing pairwise annotations
 #' @param pairwise_annotation_label column of pairwise_annotation data to use for annotation text
 #' @param pairwise_annotation_exclude values to not annotate on pairwise annotations
+#' @param pairwise_annotation_tier_width relative distance between tiers for pairwise annotations, between 0 and 1
 #' @param lower_quantile lower quantile beyond which to limit axis
 #' @param upper_quantile upper quantile beyond which to limit axis
+#' @param drop_outliers whether to drop outliers, or not (mask values at the limits)
 #' @param facet_rows columns for faceting by row
 #' @param facet_columns columns for faceting by column
 #' @param facet_type either "wrap" or "grid", corresponding to facet_wrap and facet_grid respectively
@@ -24,24 +29,23 @@
 #'
 #' @return ggplot object
 #' @export
-#'
-#' @examples
-#' NULL
 plot_distributions = function(data,
-                              pairwise_annotation = NULL,
-                              type = "quasirandom",
                               x,
                               y,
+                              type = "quasirandom",
+                              add_boxplot = ifelse(type %in% c("density", "ridge", "line"), FALSE, TRUE),
                               group = NULL,
                               color = NULL,
                               fill = NULL,
-                              alpha = 0.5,
+                              alpha = 1,
+                              point_size = 1,
                               text_size = 2,
                               scale = "default",
-                              tier_width = 0.16,
                               annotate_counts = TRUE,
+                              pairwise_annotation = NULL,
                               pairwise_annotation_label = "p_signif",
                               pairwise_annotation_exclude = c(),
+                              pairwise_annotation_tier_width = 0.16,
                               lower_quantile = 0,
                               upper_quantile = 1,
                               drop_outliers = FALSE,
@@ -49,8 +53,12 @@ plot_distributions = function(data,
                               facet_columns = c(),
                               facet_type = "grid",
                               ...) {
-
-  data =.fix_outliers(data, lower_quantile, upper_quantile, drop_outliers, c(facet_rows, facet_columns))
+  data = .fix_outliers(data,
+                       y,
+                       lower_quantile,
+                       upper_quantile,
+                       drop_outliers,
+                       c(facet_rows, facet_columns))
 
   plot = get(paste0(".plot_", type))(data,
                                      x,
@@ -58,7 +66,18 @@ plot_distributions = function(data,
                                      color,
                                      fill,
                                      group,
-                                     alpha)
+                                     alpha,
+                                     point_size)
+
+  if (add_boxplot & !(type %in% c("density", "ridge", "line"))) {
+    plot = plot +
+      geom_boxplot(
+        alpha = 0,
+        width = 0.3,
+        color = "firebrick",
+        outlier.size = 0
+      )
+  }
 
   plot = .plot_scale(plot, scale, type)
 
@@ -70,7 +89,12 @@ plot_distributions = function(data,
 
   if (annotate_counts) {
     counts_annotation = .compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
-    plot = .plot_counts_annotation(plot, x, counts_annotation, annotate_counts, type, text_size)
+    plot = .plot_counts_annotation(plot,
+                                   x,
+                                   counts_annotation,
+                                   annotate_counts,
+                                   type,
+                                   text_size)
   }
 
   if (!is.null(pairwise_annotation) &
@@ -81,7 +105,7 @@ plot_distributions = function(data,
       pairwise_annotation,
       pairwise_annotation_label,
       pairwise_annotation_exclude,
-      tier_width,
+      pairwise_annotation_tier_width,
       scale
     )
   }
@@ -102,26 +126,31 @@ plot_distributions = function(data,
 #' @importFrom dplyr group_by mutate filter
 #'
 #' @return
-#'
-#' @examples
-#' NULL
-.fix_outliers = function(data, lower_quantile, upper_quantile, drop_outliers, groups) {
-
+#' @keywords internal
+.fix_outliers = function(data,
+                         y,
+                         lower_quantile,
+                         upper_quantile,
+                         drop_outliers,
+                         groups) {
   data = data %>%
     group_by(.dots = groups) %>%
-    mutate(upper_quantile = quantile(value, upper_quantile),
-           lower_quantile = quantile(value, lower_quantile)) %>%
-    mutate(upper_outlier = value > upper_quantile,
-           lower_outlier = value < lower_quantile) %>%
+    mutate(
+      upper_quantile = quantile(!!as.name(y), upper_quantile),
+      lower_quantile = quantile(!!as.name(y), lower_quantile)
+    ) %>%
+    mutate(
+      upper_outlier = !!as.name(y) > upper_quantile,
+      lower_outlier = !!as.name(y) < lower_quantile
+    ) %>%
     mutate(outlier = lower_outlier | upper_outlier)
 
   if (drop_outliers) {
     data = data %>%
       filter(!outlier)
   } else {
-    data = data %>%
-      mutate(value = ifelse(lower_outlier, lower_quantile, value)) %>%
-      mutate(value = ifelse(upper_outlier, upper_quantile, value))
+    data[, y] = ifelse(data$lower_outlier, lower_quantile, data[, y, drop = TRUE])
+    data[, y] = ifelse(data$upper_outlier, upper_quantile, data[, y, drop = TRUE])
   }
 
   return(data)
@@ -138,9 +167,7 @@ plot_distributions = function(data,
 #' @importFrom dplyr group_by tally
 #'
 #' @return
-#'
-#' @examples
-#' NULL
+#' @keywords internal
 .compute_counts_annotation_data = function(data, x, groups) {
   counts = data[, unique(c(x, groups)), drop = FALSE] %>%
     na.omit()
@@ -212,9 +239,7 @@ plot_distributions = function(data,
 #' @import ggplot2
 #'
 #' @return
-#'
-#' @examples
-#' NULL
+#' @keywords internal
 .plot_scale = function(plot, scale, type) {
   if (scale == "log") {
     plot = plot +
@@ -243,12 +268,13 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_line = function(data,
-                      x = NULL,
-                      y = NULL,
-                      color = NULL,
-                      fill = NULL,
-                      group = NULL,
-                      alpha = 0.5) {
+                      x,
+                      y,
+                      color,
+                      fill,
+                      group,
+                      alpha,
+                      point_size) {
   plot = ggplot(data) +
     geom_line(alpha = alpha,
               aes_string(
@@ -259,7 +285,8 @@ plot_distributions = function(data,
               )) +
     geom_point(alpha = alpha,
                aes_string(x = x, y = y, col = color),
-               shape = 1)
+               shape = 1,
+               size = point_size)
   return(plot)
 }
 
@@ -280,12 +307,13 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_sina = function(data,
-                      x = NULL,
-                      y = NULL,
-                      color = NULL,
-                      fill = NULL,
-                      group = NULL,
-                      alpha = 0.5) {
+                      x,
+                      y,
+                      color,
+                      fill,
+                      group,
+                      alpha,
+                      point_size) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
@@ -294,13 +322,8 @@ plot_distributions = function(data,
   )) +
     geom_sina(alpha = alpha,
               shape = 1,
-              position = position_dodge(width = 0)) +
-    geom_boxplot(
-      alpha = 0,
-      width = 0.3,
-      color = "firebrick",
-      outlier.size = 0
-    )
+              position = position_dodge(width = 0),
+              size = point_size)
 
   return(plot)
 }
@@ -322,12 +345,13 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_quasirandom = function(data,
-                             x = NULL,
-                             y = NULL,
-                             color = NULL,
-                             fill = NULL,
-                             group = NULL,
-                             alpha = 0.5) {
+                             x,
+                             y,
+                             color,
+                             fill,
+                             group,
+                             alpha,
+                             point_size) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
@@ -338,14 +362,45 @@ plot_distributions = function(data,
       method = "tukeyDense",
       alpha = alpha,
       shape = 1,
-      position = position_dodge(width = 1)
-    ) +
-    geom_boxplot(
-      alpha = 0,
-      width = 0.3,
-      color = "firebrick",
-      outlier.size = 0,
+      position = position_dodge(width = 1),
+      size = point_size
     )
+  return(plot)
+}
+
+#' Plot jitter plot
+#'
+#' @param data Data frame for plotting
+#' @param x Column for x-axis
+#' @param y Column for y-axis
+#' @param color Column to color points by
+#' @param group Column to group points by - not relevant for this function
+#' @param alpha Alpha for each point
+#'
+#' @import ggplot2
+#' @importFrom  ggbeeswarm geom_quasirandom
+#'
+#' @return
+#'
+#' @examples
+#' NULL
+.plot_jitter = function(data,
+                        x,
+                        y,
+                        color,
+                        fill,
+                        group,
+                        alpha,
+                        point_size) {
+  plot = ggplot(data, aes_string(
+    x = x,
+    y = y,
+    col = color,
+    group = group
+  )) +
+    geom_jitter(alpha = alpha,
+                shape = 1,
+                size = point_size)
   return(plot)
 }
 
@@ -365,25 +420,21 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_violin = function(data,
-                        x = NULL,
-                        y = NULL,
-                        color = NULL,
-                        fill = NULL,
-                        group = NULL,
-                        alpha = 0.5) {
+                        x,
+                        y,
+                        color,
+                        fill,
+                        group,
+                        alpha,
+                        point_size) {
   plot = ggplot(data, aes_string(
     x = x,
     y = y,
     col = color,
-    group = group
+    group = group,
+    fill = fill
   )) +
-    geom_violin(alpha = alpha) +
-    geom_boxplot(
-      alpha = 0,
-      width = 0.3,
-      outlier.size = 0,
-      color = "firebrick"
-    )
+    geom_violin(alpha = alpha)
   return(plot)
 }
 
@@ -403,12 +454,13 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_box = function(data,
-                     x = NULL,
-                     y = NULL,
-                     color = NULL,
-                     fill = NULL,
-                     group = NULL,
-                     alpha = 0.5) {
+                     x,
+                     y,
+                     color,
+                     fill,
+                     group,
+                     alpha,
+                     point_size) {
   plot = ggplot(data) +
     geom_boxplot(alpha = 1,
                  width = 0.3,
@@ -417,7 +469,8 @@ plot_distributions = function(data,
                    y = y,
                    col = color,
                    group = group
-                 ))
+                 ),
+                 outlier.size = point_size)
 
   return(plot)
 }
@@ -438,20 +491,20 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_density = function(data,
-                         x = NULL,
-                         y = NULL,
-                         color = NULL,
-                         fill = NULL,
-                         group = NULL,
-                         alpha = 0.5) {
+                         x,
+                         y,
+                         color,
+                         fill,
+                         group,
+                         alpha,
+                         point_size) {
   plot = ggplot(data, aes_string(
     x = y,
     col = color,
     fill = fill,
     group = group
   )) +
-    geom_density(alpha = alpha) +
-    geom_rug(alpha = 0.5)
+    geom_density(alpha = alpha)
   return(plot)
 }
 
@@ -472,19 +525,19 @@ plot_distributions = function(data,
 #' @examples
 #' NULL
 .plot_ridge = function(data,
-                       x = NULL,
-                       y = NULL,
-                       color = NULL,
-                       fill = NULL,
-                       group = NULL,
-                       alpha = 0.5) {
+                       x,
+                       y,
+                       color,
+                       fill,
+                       group,
+                       alpha,
+                       point_size) {
   plot = ggplot(data, aes_string(
     x = y,
     y = x,
     col = color,
     fill = fill
   )) +
-    geom_density_ridges(alpha = alpha) +
-    geom_rug(alpha = 0.5, aes_string(color = color))
+    geom_density_ridges(alpha = alpha)
   return(plot)
 }
