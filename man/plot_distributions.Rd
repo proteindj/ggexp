@@ -9,7 +9,7 @@ plot_distributions(
   x,
   y,
   type = "quasirandom",
-  add_boxplot = ifelse(type \%in\% c("density", "ridge"), FALSE, TRUE),
+  add_boxplot = ifelse(type \%in\% c("density", "ridge", "line"), FALSE, TRUE),
   group = NULL,
   color = NULL,
   fill = NULL,
