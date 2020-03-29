@@ -13,12 +13,13 @@ analysis with publication-quality figures.
   - `plot_distributions`: Plot distributions with flexibility of quickly
     changing plot attributes in a one-liner.
   - `plot_pairwise_scatterplot`: Plot a pairwise scatterplot.
+  - `plot_heatmap`: Plot an annotatedheatmap using ComplexHeatmap, but
+    with a simplified yet flexible interface (not `ggplot` based, might
+    need to rename the package\!)
   - `plot_barplot`: Plot a barplot with annotations and easily switch
     between stacked, unstacked and adjust text annotations accordingly.
   - `theme_ggexp`: Variation on `ggplot2::theme_classic` with a blank
     strip background for facets.
-  - `get_palette`: Generate consistent and ordered palettes based on
-    palettes from `ggsci`.
 
 ### `plot_pairwise_annotation`
 
