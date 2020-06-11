@@ -13,7 +13,27 @@ plot_facets = function(plot,
                        facet_columns = c(),
                        facet_type = "grid",
                        ...) {
-  plot = get(paste0(".plot_facet_", facet_type))(plot, facet_rows, facet_columns, ...)
+
+  # some backwards compatability checks, remove soon
+
+  args = list(...)
+  if (is.null(names(args))) names(args) = as.character(match.call())[-(1:5)]
+
+  if ("facet_scales" %in% names(args)) {
+    args$scales = args$facet_scales
+    args$facet_scales = NULL
+  }
+
+  if ("facet_switch" %in% names(args)) {
+    args$switch = args$facet_switch
+    args$facet_switch = NULL
+  }
+
+  if ("nrow" %in% names(args) && facet_type == "grid") {
+    args$nrow = NULL
+  }
+
+  plot = do.call(get(paste0(".plot_facet_", facet_type)), c(list(plot = plot, facet_rows = facet_rows, facet_columns = facet_columns), args))
 
   return(plot)
 }
@@ -61,6 +81,7 @@ compute_facet_dim = function(p) {
                             facet_rows,
                             facet_columns,
                             ...) {
+
   formula = as.formula(paste0(
     ifelse(
       paste(facet_rows, collapse = " + ") == "",
