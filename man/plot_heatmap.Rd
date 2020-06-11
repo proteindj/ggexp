@@ -28,8 +28,8 @@ plot_heatmap(
   value_name = "value",
   title = character(0),
   colors = c("royalblue4", "white", "firebrick4"),
-  color_break_functions = list(function(matrix) quantile(matrix, lower_quantile, na.rm =
-    TRUE), function(matrix) quantile(matrix, 0.5, na.rm = TRUE), function(matrix)
+  color_break_functions = list(function(matrix) quantile(matrix, lower_quantile, na.rm
+    = TRUE), function(matrix) quantile(matrix, 0.5, na.rm = TRUE), function(matrix)
     quantile(matrix, upper_quantile, na.rm = TRUE))
 )
 }

@@ -2,6 +2,7 @@
 
 export("%>%")
 export(compute_facet_dim)
+export(get_palette)
 export(plot_barplot)
 export(plot_distributions)
 export(plot_facets)
