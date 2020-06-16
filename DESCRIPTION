@@ -9,7 +9,6 @@ License: MIT
 Encoding: UTF-8
 LazyData: true
 biocViews:
-    ComplexHeatmap
 Imports:
     ggplot2,
     magrittr,
@@ -22,5 +21,6 @@ Imports:
     magrittr,
     purrr,
     stats,
-    tidyr
+    tidyr,
+    ComplexHeatmap
 RoxygenNote: 7.1.0
