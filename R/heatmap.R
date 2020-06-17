@@ -141,7 +141,7 @@ plot_heatmap = function(matrix,
   } else {
     result = HeatmapAnnotation(
       df = data,
-      col = .parse_palette_CH(data, palette),
+      col = generate_palette_complex_heatmap(data, palette),
       show_annotation_name = TRUE,
       annotation_name_side = ifelse(which == "row", "bottom", "left"),
       which = which,
@@ -163,100 +163,4 @@ plot_heatmap = function(matrix,
     result = data
   }
   return(result)
-}
-
-.parse_palette_CH = function(annotations, palette) {
-  for (column in colnames(annotations)) {
-    column_values = annotations[, column, drop = TRUE]
-    if (is.null(palette[[column]])) {
-      # no palette specified
-      if (!is.numeric(column_values) |
-          all(column_values %in% c(0, 1))) {
-        # discrete values or one-hot encoded
-        palette[[column]] = .parse_discrete_palette_CH(column_values, palette[[column]])
-      } else {
-        # numeric values
-        palette[[column]] = .parse_continuous_palette_CH(column_values, palette[[column]])
-      }
-    } else {
-      # palette specified
-      if ("colors" %in% names(palette[[column]])) {
-        # continuous palette specified
-        palette[[column]] = .parse_continuous_palette_CH(column_values, palette[[column]])
-      } else {
-        # discrete palette specified
-        palette[[column]] = .parse_discrete_palette_CH(column_values, palette[[column]])
-      }
-    }
-  }
-  return(palette[colnames(annotations)])
-}
-
-.parse_discrete_palette_CH = function(values, palette) {
-  palette = as.list(.parse_discrete_palette(values, palette))
-  if (all(values %in% c(0, 1))) {
-    palette$`0` = "white"
-    palette$`1` = "black"
-  }
-  palette = unlist(palette)
-  palette = palette[!is.na(names(palette))]
-  return(palette)
-}
-
-.parse_continuous_palette_CH = function(values, palette) {
-  palette = .parse_continuous_palette(values, palette)
-  palette = circlize::colorRamp2(breaks = palette$breaks, colors = palette$colors)
-  return(palette)
-}
-
-.parse_continuous_palette = function(values, palette) {
-  if (is.null(palette))
-    palette = list() # in case no palette specified
-  if ("colors" %in% names(palette)) {
-    # colors specified
-    if ("breaks" %in% names(palette)) {
-      # both colors and breaks specified
-      if (length(palette$colors) != length(palette$breaks)) {
-        # colors and breaks do not match in length
-        palette$breaks = seq(
-          from = min(values),
-          to = max(values),
-          length.out = length(palette$colors)
-        )
-      }
-    } else {
-      # only colors specified, breaks inferred
-      palette$breaks = seq(
-        from = min(values, na.rm = TRUE),
-        to = max(values, na.rm = TRUE),
-        length.out = length(palette$colors)
-      )
-    }
-  } else {
-    # no palette specified
-    palette$colors = c("white", "firebrick")
-    palette$breaks = c(min(values, na.rm = TRUE), max(values, na.rm = TRUE))
-  }
-  return(palette)
-}
-
-.parse_discrete_palette = function(values, palette) {
-  if (is.null(palette))
-    palette = list()
-  complete_palette = .generate_default_discrete_palette(values)
-  for (value in unique(values)) {
-    if (value %in% names(palette)) {
-      complete_palette[[as.character(value)]] = palette[[as.character(value)]]
-    }
-  }
-  return(unlist(complete_palette))
-}
-
-.generate_default_discrete_palette = function(values) {
-  levels = unique(values[!values == "NA"])
-  palette = c(ggsci::pal_aaas()(10), ggsci::pal_igv()(50))
-  palette_custom = palette[1:length(levels)]
-  names(palette_custom) = sort(levels)
-  palette_custom = as.list(c(palette_custom, "NA" = "gray70"))
-  return(palette_custom)
 }

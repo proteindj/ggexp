@@ -2,6 +2,8 @@
 
 export("%>%")
 export(compute_facet_dim)
+export(generate_palette_complex_heatmap)
+export(generate_palette_ggplot)
 export(get_palette)
 export(plot_barplot)
 export(plot_distributions)
