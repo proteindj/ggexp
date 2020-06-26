@@ -73,7 +73,7 @@ plot_pairwise_annotation = function(plot,
 #' @param tier_width relative distance between tiers for pairwise annotations
 #' @param scale either "default" for linearly-spaced scale between y tier positions or "log" for log-spaced
 #'
-#' @importFrom dplyr left_join
+#' @importFrom dplyr left_join bind_cols
 #' @importFrom tidyr nest unnest
 #' @importFrom purrr map2
 #'
@@ -91,7 +91,11 @@ plot_pairwise_annotation = function(plot,
   pairwise_annotation = nest(pairwise_annotation,
                              pairwise_annotation = setdiff(colnames(pairwise_annotation), groups))
 
-  combined = left_join(data, pairwise_annotation, by = groups)
+  if (length(groups) > 0) {
+    combined = left_join(data, pairwise_annotation, by = groups)
+  } else {
+    combined = bind_cols(data, pairwise_annotation)
+  }
 
   processed_annotation = map2(
     combined$data,
