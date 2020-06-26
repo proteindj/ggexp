@@ -81,11 +81,14 @@ plot_distributions = function(data,
 
   plot = .plot_scale(plot, scale, type)
 
-  plot = plot_facets(plot,
-                     facet_rows,
-                     facet_columns,
-                     facet_type,
-                     ...)
+
+  if (length(c(facet_rows, facet_columns)) > 0) {
+    plot = plot_facets(plot,
+                       facet_rows,
+                       facet_columns,
+                       facet_type,
+                       ...)
+  }
 
   if (annotate_counts) {
     counts_annotation = .compute_counts_annotation_data(data, x, c(facet_rows, facet_columns))
