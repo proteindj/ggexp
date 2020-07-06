@@ -33,6 +33,10 @@ plot_facets = function(plot,
     args$nrow = NULL
   }
 
+  if ("ncol" %in% names(args) && facet_type == "grid") {
+    args$ncol = NULL
+  }
+
   plot = do.call(get(paste0(".plot_facet_", facet_type)), c(list(plot = plot, facet_rows = facet_rows, facet_columns = facet_columns), args))
 
   return(plot)
