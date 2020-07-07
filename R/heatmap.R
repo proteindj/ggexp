@@ -59,7 +59,7 @@ plot_heatmap = function(matrix,
       function(matrix)
         quantile(matrix, lower_quantile, na.rm = TRUE),
       function(matrix)
-        mean(quantile(matrix, lower_quantile, na.rm = TRUE), quantile(matrix, upper_quantile, na.rm = TRUE)),
+        (quantile(matrix, lower_quantile, na.rm = TRUE) + quantile(matrix, upper_quantile, na.rm = TRUE))/2,
       function(matrix)
         quantile(matrix, upper_quantile, na.rm = TRUE)
     )
@@ -77,6 +77,8 @@ plot_heatmap = function(matrix,
                                 text_size,
                                 palette)
 
+  print(sapply(color_break_functions, function(fn) fn(matrix)))
+  print(colors)
   heatmap_color = colorRamp2(sapply(color_break_functions, function(fn) fn(matrix)), colors)
 
   heatmap = Heatmap(
