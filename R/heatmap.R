@@ -52,15 +52,18 @@ plot_heatmap = function(matrix,
                         value_name = "value",
                         title = character(0),
                         colors = c("royalblue4", "white", "firebrick4"),
-                        color_break_functions = list(
-                          function(matrix)
-                          quantile(matrix, lower_quantile, na.rm = TRUE),
-                          function(matrix)
-                            quantile(matrix, 0.5, na.rm = TRUE),
-                          function(matrix)
-                            quantile(matrix, upper_quantile, na.rm = TRUE)
-                          )
-                        ) {
+                        color_break_functions = NULL) {
+
+  if (is.null(color_break_functions)) {
+    color_break_functions = list(
+      function(matrix)
+        quantile(matrix, lower_quantile, na.rm = TRUE),
+      function(matrix)
+        mean(quantile(matrix, lower_quantile, na.rm = TRUE), quantile(matrix, upper_quantile, na.rm = TRUE)),
+      function(matrix)
+        quantile(matrix, upper_quantile, na.rm = TRUE)
+    )
+  }
 
   row_anno = .create_annotation(row_annotations,
                                 "row",
