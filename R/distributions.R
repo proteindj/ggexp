@@ -74,7 +74,6 @@ plot_distributions = function(data,
       geom_boxplot(
         alpha = 0,
         width = 0.3,
-        color = "firebrick",
         outlier.size = 0
       )
   }
