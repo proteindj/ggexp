@@ -23,5 +23,6 @@ Imports:
     stats,
     tidyr,
     ComplexHeatmap,
-    ggsci
+    ggsci,
+    dummies
 RoxygenNote: 7.1.0
