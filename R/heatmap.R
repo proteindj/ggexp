@@ -3,9 +3,11 @@
 #' @param matrix matrix to plot
 #' @param row_annotations data frame with annotations for the rows of the matrix
 #' @param column_annotations data frame with annotations for the columns of the matrix
+#' @param one_hot_row_annotations data frame with annotations for the rows of the matrix that are to be one-hot encoded
+#' @param one_hot_column_annotations data frame with annotations for the columns of the matrix that are to be one-hot encoded
+#' @param palette named list of named character vectors with the values being the colors if discrete, or in the form c(colors = XXX, breaks = XXX) if  continuous
 #' @param split_rows columns of row_annotations to split heatmap rows by
 #' @param split_columns columns of column_annottations to  split heatmap columns by
-#' @param palette named list of named character vectors with the values being the colors if discrete, or in the form c(colors = XXX, breaks = XXX) if  continuous
 #' @param cluster_rows boolean to cluster rows or not
 #' @param cluster_columns boolean to cluster columns or not
 #' @param show_row_dend boolean to show row dendrogram or not
@@ -20,11 +22,12 @@
 #' @param text_size text size
 #' @param row_names_size text size for row names
 #' @param column_names_size text size for column names
+#' @param heatmap_color one of BWR (blue-white-red), cividis, viridis, plasma, magma, or inferno
+#' @param color_by_quantile whether to space color values in color bar by quantile or not
 #' @param value_name name of value, written above color bar
 #' @param title title of plot
 #'
 #' @importFrom ComplexHeatmap Heatmap draw
-#' @importFrom circlize colorRamp2
 #' @importFrom grid gpar
 #'
 #' @return
@@ -32,9 +35,11 @@
 plot_heatmap = function(matrix,
                         row_annotations = NULL,
                         column_annotations = NULL,
+                        one_hot_row_annotations = NULL,
+                        one_hot_column_annotations = NULL,
+                        palette = list(),
                         split_rows = NULL,
                         split_columns = NULL,
-                        palette = list(),
                         cluster_rows = TRUE,
                         cluster_columns = TRUE,
                         show_row_dend = TRUE,
@@ -49,37 +54,32 @@ plot_heatmap = function(matrix,
                         text_size = 10,
                         row_names_size = 4,
                         column_names_size = 4,
+                        heatmap_color = c("BWR", "cividis", "viridis", "plasma", "magma", "inferno"),
+                        color_by_quantile = TRUE,
                         value_name = "value",
-                        title = character(0),
-                        colors = c("royalblue4", "white", "firebrick4"),
-                        color_break_functions = NULL) {
+                        title = character(0)) {
 
-  if (is.null(color_break_functions)) {
-    color_break_functions = list(
-      function(matrix)
-        quantile(matrix, lower_quantile, na.rm = TRUE),
-      function(matrix)
-        (quantile(matrix, lower_quantile, na.rm = TRUE) + quantile(matrix, upper_quantile, na.rm = TRUE))/2,
-      function(matrix)
-        quantile(matrix, upper_quantile, na.rm = TRUE)
-    )
-  }
+  heatmap_color = match.arg(heatmap_color)
 
   row_anno = .create_annotation(row_annotations,
+                                one_hot_row_annotations,
                                 "row",
                                 show_legend_row,
                                 text_size,
                                 palette)
 
   col_anno = .create_annotation(column_annotations,
+                                one_hot_column_annotations,
                                 "column",
                                 show_legend_column,
                                 text_size,
                                 palette)
 
-  print(sapply(color_break_functions, function(fn) fn(matrix)))
-  print(colors)
-  heatmap_color = colorRamp2(sapply(color_break_functions, function(fn) fn(matrix)), colors)
+  heatmap_color = .create_heatmap_color(heatmap_color,
+                                        matrix,
+                                        lower_quantile,
+                                        upper_quantile,
+                                        color_by_quantile)
 
   heatmap = Heatmap(
     matrix,
@@ -119,6 +119,7 @@ plot_heatmap = function(matrix,
   }
 
   return(heatmap)
+
 }
 
 #' Create annotation for rows/columns
@@ -131,19 +132,41 @@ plot_heatmap = function(matrix,
 #'
 #' @importFrom ComplexHeatmap HeatmapAnnotation
 #' @importFrom grid gpar
+#' @importFrom dummies dummy.data.frame
 #'
 #' @return
 #'
 #' @examples
 #' NULL
 .create_annotation = function(data,
+                              one_hot_data,
                               which,
                               show_legend,
                               text_size,
                               palette) {
-  if (length(data) == 0) {
+
+  if (length(data) == 0 & length(one_hot_data) == 0) {
+
     result = NULL
+
   } else {
+
+    if (length(one_hot_data) > 0) {
+
+      one_hot_data = dummy.data.frame(one_hot_data, colnames(one_hot_data), sep = "-")
+
+      if (length(data) > 0) {
+
+        data = cbind(data, one_hot_data)
+
+      } else {
+
+        data = one_hot_data
+
+      }
+
+    }
+
     result = HeatmapAnnotation(
       df = data,
       col = generate_palette_complex_heatmap(data, palette),
@@ -157,15 +180,62 @@ plot_heatmap = function(matrix,
         labels_gp = gpar(fontsize = 0.9 * text_size)
       )
     )
+
   }
+
   return(result)
+
+}
+
+#' Create annotation for rows/columns
+#'
+#' @param data data frame with annotations
+#' @param which either "row" or "column" for row annotations and column annotations respectively
+#' @param show_legend columns of data to show legend for
+#' @param text_size text size
+#' @param palette color palette
+#'
+#' @importFrom circlize colorRamp2
+#' @importFrom viridisLite cividis viridis plasma magma inferno
+#'
+#' @return
+#'
+#' @examples
+#' NULL
+.create_heatmap_color = function(heatmap_color,
+                                 matrix,
+                                 lower_quantile,
+                                 upper_quantile,
+                                 color_by_quantile) {
+
+  lower = quantile(matrix, lower_quantile, na.rm = TRUE)
+  upper = quantile(matrix, upper_quantile, na.rm = TRUE)
+
+  if (color_by_quantile) {
+    breaks = quantile(matrix, seq(lower_quantile, upper_quantile, length.out = 100))
+  } else {
+    breaks = seq(lower, upper, length.out = 100)
+  }
+
+  if (heatmap_color == "BWR") {
+    colors = colorRampPalette(c("royalblue4", "white", "firebrick4"))(100)
+  } else {
+    colors = get(heatmap_color)(100)
+  }
+
+  colors = colorRamp2(breaks, colors)
+
+  return(colors)
+
 }
 
 .create_split = function(data) {
+
   if (length(data) == 0) {
     result = NULL
   } else {
     result = data
   }
+
   return(result)
 }

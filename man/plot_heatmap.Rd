@@ -8,9 +8,11 @@ plot_heatmap(
   matrix,
   row_annotations = NULL,
   column_annotations = NULL,
+  one_hot_row_annotations = NULL,
+  one_hot_column_annotations = NULL,
+  palette = list(),
   split_rows = NULL,
   split_columns = NULL,
-  palette = list(),
   cluster_rows = TRUE,
   cluster_columns = TRUE,
   show_row_dend = TRUE,
@@ -25,12 +27,10 @@ plot_heatmap(
   text_size = 10,
   row_names_size = 4,
   column_names_size = 4,
+  heatmap_color = c("BWR", "cividis", "viridis", "plasma", "magma", "inferno"),
+  color_by_quantile = TRUE,
   value_name = "value",
-  title = character(0),
-  colors = c("royalblue4", "white", "firebrick4"),
-  color_break_functions = list(function(matrix) quantile(matrix, lower_quantile, na.rm
-    = TRUE), function(matrix) quantile(matrix, 0.5, na.rm = TRUE), function(matrix)
-    quantile(matrix, upper_quantile, na.rm = TRUE))
+  title = character(0)
 )
 }
 \arguments{
@@ -40,11 +40,15 @@ plot_heatmap(
 
 \item{column_annotations}{data frame with annotations for the columns of the matrix}
 
+\item{one_hot_row_annotations}{data frame with annotations for the rows of the matrix that are to be one-hot encoded}
+
+\item{one_hot_column_annotations}{data frame with annotations for the columns of the matrix that are to be one-hot encoded}
+
+\item{palette}{named list of named character vectors with the values being the colors if discrete, or in the form c(colors = XXX, breaks = XXX) if  continuous}
+
 \item{split_rows}{columns of row_annotations to split heatmap rows by}
 
 \item{split_columns}{columns of column_annottations to  split heatmap columns by}
-
-\item{palette}{named list of named character vectors with the values being the colors if discrete, or in the form c(colors = XXX, breaks = XXX) if  continuous}
 
 \item{cluster_rows}{boolean to cluster rows or not}
 
@@ -73,6 +77,10 @@ plot_heatmap(
 \item{row_names_size}{text size for row names}
 
 \item{column_names_size}{text size for column names}
+
+\item{heatmap_color}{one of BWR (blue-white-red), cividis, viridis, plasma, magma, or inferno}
+
+\item{color_by_quantile}{whether to space color values in color bar by quantile or not}
 
 \item{value_name}{name of value, written above color bar}
 
