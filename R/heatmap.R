@@ -153,7 +153,11 @@ plot_heatmap = function(matrix,
 
     if (length(one_hot_data) > 0) {
 
-      one_hot_data = dummy.data.frame(one_hot_data, colnames(one_hot_data), sep = "-")
+      column_names = paste(paste0(colnames(one_hot_data), "-"), collapse = "|")
+
+      one_hot_data = dummy.data.frame(one_hot_data, colnames(one_hot_data), sep = "-", omit.constants = FALSE)
+
+      colnames(one_hot_data) = gsub(column_names, "", colnames(one_hot_data))
 
       if (length(data) > 0) {
 
