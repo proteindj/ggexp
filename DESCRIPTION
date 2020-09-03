@@ -24,5 +24,6 @@ Imports:
     tidyr,
     ComplexHeatmap,
     ggsci,
-    dummies
+    dummies,
+    patchwork
 RoxygenNote: 7.1.0
