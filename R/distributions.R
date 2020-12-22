@@ -115,7 +115,7 @@ plot_distributions = function(data,
 
   plot = plot + theme_ggexp()
 
-  if (color == x) {
+  if (!is.null(color) && color == x) {
     plot = plot + theme(legend.position = "none")
   }
 
