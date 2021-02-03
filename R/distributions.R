@@ -143,8 +143,8 @@ plot_distributions = function(data,
   data = data %>%
     group_by(.dots = groups) %>%
     mutate(
-      upper_quantile = quantile(!!as.name(y), upper_quantile),
-      lower_quantile = quantile(!!as.name(y), lower_quantile)
+      upper_quantile = quantile(!!as.name(y), upper_quantile, na.rm = TRUE),
+      lower_quantile = quantile(!!as.name(y), lower_quantile, na.rm = TRUE)
     ) %>%
     mutate(
       upper_outlier = !!as.name(y) > upper_quantile,
