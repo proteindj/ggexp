@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Keshav Motwani
 Maintainer: Keshav Motwani <keshavmot2@gmail.com>
 Description: This package contains several plotting utilities that are commonly useful in data displays for exploration or final publication.
-Depends:  R (= 3.6.x)  # failed test v4.0.5 and v4.1.0, may be due to Cairo dependency 
+Depends:  R (= 3.6.x)  # failed test v4.0.5 and v4.1.0, may be due to Cairo/ComplexHeatmap dependency 
 License: MIT
 Encoding: UTF-8
 LazyData: true
